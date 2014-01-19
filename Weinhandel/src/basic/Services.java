@@ -6,15 +6,12 @@ import java.sql.*;
 import object.Wein;
 
 public class Services {
-
-	private Wein[] findWein(String cFilter, String cOrderBy, int nMax) throws SQLException, IOException, ClassNotFoundException {
-		java.util.Vector v=new java.util.Vector();
-		Wein dto;
+	
+	private ResultSet createSQLStatement(String cSQL, String cFilter) throws SQLException, ClassNotFoundException{
 		Connection c;
 		String url = ServerConnection.GetDBConnectionString();
-		String sqlStatement = "Select NONSTD_004 as Kundennummer,substring(KOMMISS, 1,6) as Kundenauftragsnummer,substring(KOMMISS, 7,3) as Kundenauftragsnummerposition,BESTPOSNR as Barcode,SOLL as Planmenge,IST as Istmenge,iif(X_TERMNEU is null,substring(TERM_INDEX,1,8),X_TERMNEU) as Wunschtermin,DAB010.ARTNR as Artikelnummer,NONSTD_007 as Revision,DAB010.ARTNR as Zeichnungsnummer,X_PRIORI as Prioritaet,substring(TERM_INDEX,9,1) as WunschterminArt,X_KDWUNSCH as KundenWunschtTermin,DAB010.X_PFAD1 as ZeichnungsPfad,DAB035.AKA as AK_Gedruckt,BEZ1 as Bezeichnung1,BEZ2 as Bezeichnung2,NONSTD_007 as \"Index\"  from \"DAB035.ADT\" DAB035 inner join \"DAB240.ADT\" DAB240 on DAB035.BESTPOSNR+'000'  = DAB240.B_POS_LFD inner join \"DAB010.DBF\" DAB010 on DAB035.ARTNR = DAB010.ARTNR where LIEFNR=-1 and DAB010.standort=0  " + cOrderBy;
-		sqlStatement = sqlStatement.toUpperCase();
-		if (cFilter.length() != 0) {
+		cSQL = cSQL.toUpperCase();
+		if (cFilter.length() != 0){
 			//Exception on edit-statements
 			cFilter = cFilter.toUpperCase();
 			int nPosDel = cFilter.indexOf("DELETE");
@@ -22,27 +19,42 @@ public class Services {
 			int nPosUpd = cFilter.indexOf("UPDATE");
 			int nPosDrp = cFilter.indexOf("DROP");
 			if (nPosDel >= 0 || nPosIns >= 0 || nPosUpd >= 0 || nPosDrp>=0 )
-				throw new IOException("Edit statements are not allowed!");
+				try {
+					throw new IOException("Edit statements are not allowed!");
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			//insert filter in sql-statement
-			int nPos = sqlStatement.indexOf("WHERE");
-			int nPosOrd = sqlStatement.indexOf("GROUP BY");
-			int nPosGrp = sqlStatement.indexOf("ORDER BY");
+			int nPos = cSQL.indexOf("WHERE");
+			int nPosOrd = cSQL.indexOf("GROUP BY");
+			int nPosGrp = cSQL.indexOf("ORDER BY");
 			String sqlOrdGrp = "";
 			if (nPosOrd > 0 || nPosGrp > 0) {
-				sqlOrdGrp = sqlStatement.substring(Math.max(nPosOrd, nPosGrp));
-				sqlStatement = sqlStatement.substring(0, Math.max(nPosOrd, nPosGrp));
+				sqlOrdGrp = cSQL.substring(Math.max(nPosOrd, nPosGrp));
+				cSQL = cSQL.substring(0, Math.max(nPosOrd, nPosGrp));
 			}
 			if (nPos >= 0)
-				sqlStatement = sqlStatement + " and " +cFilter+" "+ sqlOrdGrp;
+				cSQL = cSQL + " and " +cFilter+" "+ sqlOrdGrp;
 			else
-				sqlStatement = sqlStatement + " where " +cFilter+" "+ sqlOrdGrp;
+				cSQL = cSQL + " where " +cFilter+" "+ sqlOrdGrp;	
 		}
 		//Execute Query
 		Class.forName("com.mysql.jdbc.Driver");
 		c = DriverManager.getConnection(url, ServerConnection.GetDBLoginUser(), ServerConnection.GetDBLoginPW());
 		Statement query = c.createStatement();
-		Utils.prs("SQL-Statement", sqlStatement);
-		ResultSet results = query.executeQuery(sqlStatement);
+		Utils.prs("SQL-Statement", cSQL);
+		ResultSet results = query.executeQuery(cSQL);
+		return results;
+	}
+	
+	// Finder Methode um SQL String auszuführen.
+	// - Funktion überprüft ob im Where Teil Delete etc übergeben wurde, dies führt zum Fehler.
+	private Wein[] findWein(String cFilter, String cOrderBy, int nMax) throws SQLException, IOException, ClassNotFoundException {
+		java.util.Vector v=new java.util.Vector();
+		Wein dto;
+		String cSQL = "SELECT * FROM tbl_wein";
+		ResultSet results = createSQLStatement(cSQL, cFilter);
 		//insert filter in SQL-statement
 		boolean notDone = results.next();
 		int nCount = 1;
@@ -66,18 +78,28 @@ public class Services {
 		return result;
 	}
 	
-	public  Wein[] getWeintable() throws SQLException, IOException, ClassNotFoundException{ 
-
-			return findWein("","",-1);
-	}
-	
-	public Services() throws SQLException, IOException, ClassNotFoundException{
-		getWeintable();
+	public  Wein[] getWeintable(String cFilter) throws SQLException, IOException, ClassNotFoundException{ 
+			return findWein(cFilter,"",-1);
 	}
 	
 	
-	public static void main(String[] args) throws SQLException, IOException, ClassNotFoundException{
+	// Diese Funktion legt nach Modus einen Datensatz an / löscht einen Datensatz / verändert die 
+	// Feldwerte des Datensatzes.
+	private String refreshDataBase(String TableName, int PK, String Values , boolean newDS){
 		
-		new Services();
+		// Wenn Datensatz noch nicht vorhanden ist.
+		if(newDS){
+			
+		   return "Neuer Datensatz wurde angelegt";	
+		}
+		// Datensatz muss gelöscht werden.
+		else if( Values.length() == 0){
+			
+			return "Datensatz wurde gelöscht";
+		}
+		// Datensatz wird angepasst.
+		else{
+			return "angelegt.";
+		}
 	}
 }
