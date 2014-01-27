@@ -7,7 +7,23 @@ import object.Wein;
 
 public class Services {
 	
-	private ResultSet createSQLStatement(String cSQL, String cFilter) throws SQLException, ClassNotFoundException{
+	//############################################################################
+	// Die Service Klasse stellt die Verbindung zur Weinhandel Datenbank her.
+	// Sie enthält die Methoden zum Ausführen der Datenoperationen die von der
+	// Oberfläche gesendet werden.
+	//############################################################################
+	
+	//############################################################################
+	// Funktionen zur Aufbereitung der Daten.
+	//############################################################################
+	
+	//****************************************************************************
+	// Die Funktion postSQLStatment() stellt eine Verbindung zur Datenbank her
+	// sendet den übergebenen SQL String, wartet auf die Rückgabe der Datenbank
+	// und schließt die Verbindung wieder.
+	// Die Rückgabe ist das Result aus dem SQL Statement.
+	//****************************************************************************
+	private ResultSet postSQLStatement(String cSQL, String cFilter) throws SQLException, ClassNotFoundException{
 		Connection c;
 		String url = ServerConnection.GetDBConnectionString();
 		cSQL = cSQL.toUpperCase();
@@ -47,14 +63,30 @@ public class Services {
 		ResultSet results = query.executeQuery(cSQL);
 		return results;
 	}
+
+	//****************************************************************************
+	// Die Funktion createSQLStatement setzt aus dem gegeben Modus einen SQL String
+	//****************************************************************************
+	private String createSQLStatement(String cModus){
+		String cResult = "";
+		
+		
+		return cResult;
+	}
 	
+	
+
+	//****************************************************************************
 	// Finder Methode um SQL String auszuführen.
-	// - Funktion überprüft ob im Where Teil Delete etc übergeben wurde, dies führt zum Fehler.
+	// - Funktion überprüft ob im Where Teil Delete etc übergeben wurde,
+	// dies führt zum Fehler.
+	// Die Rückgabe ist das Wein DTO
+	//****************************************************************************
 	private Wein[] findWein(String cFilter, String cOrderBy, int nMax) throws SQLException, IOException, ClassNotFoundException {
 		java.util.Vector v=new java.util.Vector();
 		Wein dto;
 		String cSQL = "SELECT * FROM tbl_wein";
-		ResultSet results = createSQLStatement(cSQL, cFilter);
+		ResultSet results = postSQLStatement(cSQL, cFilter);
 		//insert filter in SQL-statement
 		boolean notDone = results.next();
 		int nCount = 1;
@@ -77,16 +109,22 @@ public class Services {
 			result[i]=(Wein) v.elementAt(i);
 		return result;
 	}
-	
+
+	//****************************************************************************
+	// Die getWeintable() gibt die Weintabelle als Data Transfer Object zurück
+	//****************************************************************************
 	public  Wein[] getWeintable(String cFilter) throws SQLException, IOException, ClassNotFoundException{ 
 			return findWein(cFilter,"",-1);
 	}
 	
-	
-	// Diese Funktion legt nach Modus einen Datensatz an / löscht einen Datensatz / verändert die 
-	// Feldwerte des Datensatzes.
+	//****************************************************************************
+	// Diese Funktion legt nach Modus einen Datensatz an / löscht einen Datensatz 
+	// verändert die Feldwerte des Datensatzes.
+	// Rückgabe der Funktion: Rückmeldung der Datenbank.
+	//****************************************************************************
 	private String refreshDataBase(String TableName, int PK, String Values , boolean newDS){
 		
+		 
 		// Wenn Datensatz noch nicht vorhanden ist.
 		if(newDS){
 			
