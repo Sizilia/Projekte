@@ -140,4 +140,15 @@ public class Services {
 			return "angelegt.";
 		}
 	}
+	
+	//############################################################################
+	// Funktionen zum Befüllen der einzelnen Data Transfer Objects
+	//############################################################################
+	
+	//****************************************************************************
+	// Die Funktion getCustomerAdress() holt sich aus der Weinhandel Datenbank die 
+	//Rechnungs
+	//****************************************************************************
+	
+	
 }

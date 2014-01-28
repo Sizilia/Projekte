@@ -2,8 +2,8 @@ package object;
 
 public class Art {
 
-	public int m_nNr;
-	public String m_cBez;
+	private int m_nNr;
+	private String m_cBez;
 	
 	public int getNr() {
 		return m_nNr;
@@ -11,6 +11,7 @@ public class Art {
 	public void setNr(int m_nNr) {
 		this.m_nNr = m_nNr;
 	}
+	
 	public String getBez() {
 		return m_cBez;
 	}

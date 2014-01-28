@@ -2,8 +2,8 @@ package object;
 
 public class Land {
 	
-	public int m_nNr;
-	public String m_cName;
+	private int m_nNr;
+	private String m_cName;
 	
 	public int getNr(){
 		return this.m_nNr;
