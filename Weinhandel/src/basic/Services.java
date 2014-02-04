@@ -24,8 +24,7 @@ public class Services {
 	// Die RŸckgabe ist das Result aus dem SQL Statement.
 	//****************************************************************************
 	private ResultSet postSQLStatement(String cSQL, String cFilter) throws SQLException, ClassNotFoundException{
-		Connection c;
-		String url = ServerConnection.GetDBConnectionString();
+//		String url = ServerConnection.GetDBConnectionString();
 		cSQL = cSQL.toUpperCase();
 		if (cFilter.length() != 0){
 			//Exception on edit-statements
@@ -56,9 +55,9 @@ public class Services {
 				cSQL = cSQL + " where " +cFilter+" "+ sqlOrdGrp;	
 		}
 		//Execute Query
-		Class.forName("com.mysql.jdbc.Driver");
-		c = DriverManager.getConnection(url, ServerConnection.GetDBLoginUser(), ServerConnection.GetDBLoginPW());
-		Statement query = c.createStatement();
+//		Class.forName("com.mysql.jdbc.Driver");
+//		c = DriverManager.getConnection(url, ServerConnection.GetDBLoginUser(), ServerConnection.GetDBLoginPW());
+		Statement query = ServerConnection.getConnection().createStatement();
 		Utils.prs("SQL-Statement", cSQL);
 		ResultSet results = query.executeQuery(cSQL);
 		return results;
