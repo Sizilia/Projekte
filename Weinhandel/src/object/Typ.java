@@ -3,7 +3,7 @@ package object;
 public class Typ {
 	
 	private int m_nNr;
-	private String m_cName;
+	private String m_cBez;
 	
 	public int getNr() {
 		return m_nNr;
@@ -11,10 +11,10 @@ public class Typ {
 	public void setNr(int m_nNr) {
 		this.m_nNr = m_nNr;
 	}
-	public String getName() {
-		return m_cName;
+	public String getBez() {
+		return m_cBez;
 	}
-	public void setName(String m_cName) {
-		this.m_cName = m_cName;
+	public void setBez(String m_cBez) {
+		this.m_cBez = m_cBez;
 	}	
 }

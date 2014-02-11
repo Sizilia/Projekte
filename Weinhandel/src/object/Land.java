@@ -16,4 +16,8 @@ public class Land {
 	public String getName(){
 		return this.m_cName;
 	}
+	
+	public void setName(String m_cName){
+		this.m_cName = m_cName;
+	}
 }

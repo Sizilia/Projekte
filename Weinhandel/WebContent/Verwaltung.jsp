@@ -42,6 +42,7 @@
 					Hier haben nur Mitarbeiter der SW&DA Weinhandel GmbH zutritt.
 				</p>
 				<br/>
+				<% if(request.getParameter("uname") == null && request.getParameter("pass")== null){ %>
             	<table border="1" width="30%" cellpadding="3">
                		<thead>
                     	<tr>
@@ -64,7 +65,14 @@
                    	</form>
                 	</tbody>
             	</table>
-            </center>
+            	<% 
+            		}else{ 
+            			String userName, userPassword;
+            			userName = request.getParameter("uname");
+            			userPassword = request.getParameter("pass");
+            		}
+				%>
+            </center>            
 		</div>
 		<!-- Sidebar -->
 		<div id="sidebar">
