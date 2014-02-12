@@ -8,6 +8,8 @@ import object.*;
 
 public class Services {
 	
+	// wsdl : http://localhost:8080/Weinhandel/wsdl/Services.wsdl
+	
 	private String m_cFilter;
 	
 	// Hashtables für Properties
@@ -531,21 +533,22 @@ public class Services {
 	// Die Funktion �berpr�ft ob das Passwort des Mitarbeiters 
 	//korrekt eingetippt wurde
 	//****************************************************************************
-	public boolean checkPW(int UserID,String cPW) throws ClassNotFoundException, SQLException, IOException{
+	public boolean checkPW(String Username,String cPW) throws Exception{
 		
 		String cFilter ="";
-		cFilter = "ID =" + String.valueOf(UserID);
+		cFilter = "Username = '" + Username + "'";
 		Benutzer[] oUser = findBenutzer(cFilter,"",1,false);
+		if (oUser.length == 0)
+			throw new Exception("Benutzer ist nicht vorhanden");
 		
-		if(oUser[0].getPassw() == cPW)
+		Utils.prs("Passwort", oUser[0].getPassw());
+		if(oUser[0].getPassw().equals(cPW))
 			return true;
 		
 		else
 			return false;
 	}
 	
-	
-
 	
 	//############################################################################
 	// Funktionen zum Bef�llen der einzelnen Data Transfer Objects
