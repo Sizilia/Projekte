@@ -11,13 +11,14 @@
 <body>
 <%
 	Services dbService = new Services();
-	Wein[] weinTable = dbService.getWeinTable("");
-	Art[] artTable = dbService.getArtTable("");
-	Land[] landTable = dbService.getLandTable("");
-	Rebsorte[] rebsorteTable = dbService.getRebsorteTable("");
-	Region[] regionTable = dbService.getRegionTable("");
-	Typ[] typTable = dbService.getTypTable("");
-	Weingut[] weingutTable = dbService.getWeingutTable("");
+	Wein[] weinTable = dbService.getWeinTable("", false);
+	Art[] artTable = dbService.getArtTable("", false);
+	Land[] landTable = dbService.getLandTable("", false);
+	Rebsorte[] rebsorteTable = dbService.getRebsorteTable("", false);
+	Region[] regionTable = dbService.getRegionTable("", false);
+	Typ[] typTable = dbService.getTypTable("", false);
+	Weingut[] weingutTable = dbService.getWeingutTable("", false);
+	String cFilter = "";
 %>
 <div class="style3"></div><div class="style_2"><span class="style3"><a><strong></strong></a></span></div>
 <div id="wrap">
@@ -53,7 +54,7 @@
 					dienen Ihnen die Filter auf der rechten Seite.
 				</p>
 		</div>
-		<div id="mainpage">
+		<div id="ShopMainpage">
 			<p>
 				<!-- Tabelle Wein -->				
 				<table border="1">
@@ -61,12 +62,18 @@
 						<th>Name</th>
 						<th>Jahrgang</th>
 						<th>Preis</th>
+						<th>Weingut</th>
+						<th>Typ</th>
+						<th>Art</th>
 					</tr>
 					<% for(int i = 0; i < weinTable.length; i++){ %>
 					<tr>
 						<td><%= weinTable[i].getname() %></td>
 						<td><%= weinTable[i].getjahrgang() %></td>
 						<td><%= weinTable[i].getpreis() %></td>
+						<td><%= weinTable[i].getWeingutBez() %></td>
+						<td><%= weinTable[i].getWeintypBez() %></td>
+						<td><%= weinTable[i].getWeinartBez() %></td>
 					</tr>
 					<% } %>
 				</table>				
@@ -95,43 +102,49 @@
 				&& request.getParameter("weingut") == null){ 
 		%>
 				<!-- Art Filter -->
+				<b>Art:</b>
 				<p><select name="art" style="width: 100px">
-				<option>Art</option>
+				<option><%="" %></option><!-- leeren String als Startwert -->
 				<% for(int i = 0; i < artTable.length; i++){ %>
 				<option><%=artTable[i].getBez() %></option>
 				<% } %>
 				</select></p>
 				<!-- Land Filter -->
+				<b>Land:</b>
 				<p><select name="land" style="width: 100px">
-				<option>Land</option>
+				<option><%="" %></option><!-- leeren String als Startwert -->
 				<% for(int i = 0; i < landTable.length; i++){ %>
 				<option><%=landTable[i].getName() %></option>
 				<% } %>
 				</select></p>
 				<!-- Region Filter -->
+				<b>Region:</b>
 				<p><select name="region" style="width: 100px">
-				<option>Region</option>
+				<option><%="" %></option><!-- leeren String als Startwert -->
 				<% for(int i = 0; i < regionTable.length; i++){ %>
 				<option><%=regionTable[i].getName() %></option>
 				<% } %>
 				</select></p>
 				<!-- Typ Filter -->
-				<p><select name="typ" style="width: 100px">
-				<option>Typ</option>
+				<b>Typ:</b>
+				<p><select name="typ" style="width: 100px">				
+				<option><%="" %></option><!-- leeren String als Startwert -->
 				<% for(int i = 0; i < typTable.length; i++){ %>
 				<option><%=typTable[i].getBez() %></option>
 				<% } %>
 				</select></p>
 				<!-- Rebsorte Filter -->
-				<p><select name="rebsorte" style="width: 100px">
-				<option>Rebsorten</option>
+				<b>Rebsorte:</b>
+				<p><select name="rebsorte" style="width: 100px">				
+				<option><%="" %></option><!-- leeren String als Startwert -->
 				<% for(int i = 0; i < rebsorteTable.length; i++){ %>
 				<option><%= rebsorteTable[i].getName() %></option>
 				<% } %>
 				</select></p>
 				<!-- Weingut -->
-				<p><select name="weingut" style="width: 100px">
-				<option>Weingut</option>
+				<b>Weingut:</b>
+				<p><select name="weingut" style="width: 100px">				
+				<option><%="" %></option><!-- leeren String als Startwert -->
 				<% for(int i = 0; i < weingutTable.length; i++){ %>
 				<option><%= weingutTable[i].getName() %></option>
 				<% } %>
@@ -143,11 +156,23 @@
 			}else{
 				String art, land, region, typ, rebsorte, weingut;
 				art = request.getParameter("art");
+				if(!art.equals(""))
+					cFilter = dbService.addFilter(cFilter, "art.bez", "'" + art + "' ");
 				land = request.getParameter("land");
+				if(!land.equals(""))
+					cFilter = dbService.addFilter(cFilter, "LAND.NAME", "'" + land + "' ");
 				region = request.getParameter("region");
+				if(!region.equals(""))
+					cFilter = dbService.addFilter(cFilter, "REGION.NAME", "'" + region + "' ");
 				typ = request.getParameter("typ");
+				if(!typ.equals(""))
+					cFilter = dbService.addFilter(cFilter, "TYP.BEZ", "'" + typ + "' ");
 				rebsorte = request.getParameter("rebsorte");
+				if(!rebsorte.equals(""))
+					cFilter = dbService.addFilter(cFilter, "REBSORTE.NAME",  "'" + rebsorte + "' ");
 				weingut = request.getParameter("weingut");
+				if(!weingut.equals(""))
+					cFilter = dbService.addFilter(cFilter, "WEINGUT.NAME",  " '" + weingut + "'");
 				// Ausgewählte Werte der Comboboxen ausgeben
 				out.print("<b>Art</b>:<p>" + art + "</p>");
 				out.print("<b>Land:</b><p>" + land + "</p>");
@@ -155,8 +180,10 @@
 				out.print("<b>Typ:</b><p>" + typ + "</p>");
 				out.print("<b>Rebsorte:</b><p>" + rebsorte + "</p>");
 				out.print("<b>Weingut:</b><p>" + weingut + "</p>");
+				weinTable = dbService.getWeinTable(cFilter, false);
 			}
 		%>
+			
 			<br/>
 		</div>
 		</form>

@@ -39,17 +39,25 @@ public class Services {
 	private Wein[] findWein(String cFilter, String cOrderBy, int nMax, boolean bAdmin) throws SQLException, IOException, ClassNotFoundException {
 		java.util.Vector<Wein> v=new java.util.Vector<Wein>();
 		Wein dto;
-		String cSQL = "SELECT * FROM wein INNER JOIN weingut ON wein.weingut = weingut.nr INNER JOIN region  ON weingut.region = region.nr INNER JOIN land    ON region.land = land.nr INNER JOIN typ     ON wein.typ = typ.nr";
+		String cSQL = "SELECT * FROM wein "+ 
+					  "INNER JOIN weingut ON wein.weingut = weingut.nr " +
+					  "INNER JOIN region ON weingut.region = region.nr " +
+					  "INNER JOIN land ON region.land = land.nr " +
+					  "INNER JOIN typ ON wein.typ = typ.nr " +
+					  "INNER JOIN art ON wein.art = art.nr " + 
+					  "INNER JOIN wein_rebsorte ON wein.nr = wein_rebsorte.wein " + 
+					  "INNER JOIN rebsorte ON wein_rebsorte.rebsorte= rebsorte.nr ";
+
 		ResultSet results = postSQLStatement(cSQL, cFilter, bAdmin);
 		//insert filter in SQL-statement
 		boolean notDone = results.next();
 		int nCount = 1;
 		while(notDone & (nCount <= nMax || nMax == -1)) {
 			dto=new Wein();
-			dto.setnr(results.getInt("nr"));
+			//dto.setnr(results.getInt("nr"));
 			dto.setname(results.getString("name"));
 			dto.setjahrgang(results.getInt("jahrgang"));
-			dto.setbeschr(results.getString("beschr"));
+			//dto.setbeschr(results.getString("beschr"));
 			dto.setpreis(results.getFloat("preis"));
 			dto.setweingut(results.getInt("weingut"));
 			dto.settyp(results.getInt("typ"));
@@ -320,6 +328,7 @@ public class Services {
 
 		Class.forName("com.mysql.jdbc.Driver");
 		connect = DriverManager.getConnection(url, user, userPw);
+		System.out.println(cSQL);
 		query = connect.createStatement();
 		results = query.executeQuery(cSQL);
 		Utils.prs("SQL-Statement", cSQL);
@@ -441,8 +450,7 @@ public class Services {
 		fillRegionHt();
 		fillWeingutHt();
 		
-		for(int i=0 ; i < weintabelle.length ; i++){
-			
+		for(int i=0 ; i < weintabelle.length ; i++){			
 			weintabelle[i].setWeinartBez(ArtHt.get(weintabelle[i].getart()));
 			weintabelle[i].setWeingutBez(WeingutHt.get(weintabelle[i].getweingut()));
 			weintabelle[i].setWeintypBez(TypHt.get(weintabelle[i].gettyp()));
@@ -521,9 +529,11 @@ public class Services {
 	// Die Funktion �berpr�ft ob das Passwort des Mitarbeiters 
 	//korrekt eingetippt wurde
 	//****************************************************************************
-	public void addFilter(String m_cFilter, String cFieldname, String cFieldValue){
-		if (! m_cFilter.contains(cFieldname))
+	public String addFilter(String m_cFilter, String cFieldname, String cFieldValue){
+		if (!m_cFilter.contains(cFieldname))
 			m_cFilter += cFieldname + " = " + cFieldValue;
+		
+		return m_cFilter;
 	}
 	
 	

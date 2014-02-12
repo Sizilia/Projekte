@@ -1,9 +1,13 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN">
+<%@page import="basic.*" %>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>Mitarbeiterlogin | Weinhandel SW & DA</title>
 <link href="style.css" rel="stylesheet" type="text/css" />
+<%
+	Services dbService = new Services();
+%>
 </head>
 <body>
 <div class="style3"></div><div class="style_2"><span class="style3"><a><strong></strong></a></span></div>
@@ -36,7 +40,6 @@
 		<div id="HeaderContent">
 			<h2>Mitarbeiterlogin</h2>
 		</div>
-		<div id="homeMainpage">
 			<center>
 				<p>
 					Hier haben nur Mitarbeiter der SW&DA Weinhandel GmbH zutritt.
@@ -59,8 +62,7 @@
                        	 	<td>Password</td>
                         	<td><input type="password" name="pass" value="" /></td>
                     	</tr>
-                    	<tr align="center">
-                       		<td><input type="submit" value="Login" /></td>
+                    		<td><input type="submit" value="Login" /></td>
                    		</tr>
                    	</form>
                 	</tbody>
@@ -70,10 +72,14 @@
             			String userName, userPassword;
             			userName = request.getParameter("uname");
             			userPassword = request.getParameter("pass");
+            			if(dbService.checkPW(userName, userPassword)){
+            				response.sendRedirect("dbVerwaltung.jsp");
+            			}else{
+            				out.println("Username oder Passwort sind falsch!");
+            			}
             		}
 				%>
             </center>            
-		</div>
 		<!-- Sidebar -->
 		<div id="sidebar">
 
