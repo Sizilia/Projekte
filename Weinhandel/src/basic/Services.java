@@ -38,7 +38,7 @@ public class Services {
 	private Wein[] findWein(String cFilter, String cOrderBy, int nMax, boolean bAdmin) throws SQLException, IOException, ClassNotFoundException {
 		java.util.Vector<Wein> v=new java.util.Vector<Wein>();
 		Wein dto;
-		String cSQL = "SELECT * FROM wein INNER JOIN weingut ON weingut.gut = weingut.nr INNER JOIN region  ON weingut.region = region.nr INNER JOIN land    ON region.land = land.nr INNER JOIN typ     ON wein.typ = typ.nr";
+		String cSQL = "SELECT * FROM wein INNER JOIN weingut ON wein.weingut = weingut.nr INNER JOIN region  ON weingut.region = region.nr INNER JOIN land    ON region.land = land.nr INNER JOIN typ     ON wein.typ = typ.nr";
 		ResultSet results = postSQLStatement(cSQL, cFilter, bAdmin);
 		//insert filter in SQL-statement
 		boolean notDone = results.next();
@@ -521,10 +521,8 @@ public class Services {
 	//korrekt eingetippt wurde
 	//****************************************************************************
 	public void addFilter(String cFieldname, String cFieldValue){
-		
-		
-		
-		
+		if (! m_cFilter.contains(cFieldname))
+			m_cFilter += cFieldname + " = " + cFieldValue;
 	}
 	
 	
