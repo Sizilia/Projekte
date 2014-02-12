@@ -9,8 +9,8 @@ public class Services {
 	
 	//############################################################################
 	// Die Service Klasse stellt die Verbindung zur Weinhandel Datenbank her.
-	// Sie enthŠlt die Methoden zum AusfŸhren der Datenoperationen die von der
-	// OberflŠche gesendet werden.
+	// Sie enthï¿½lt die Methoden zum Ausfï¿½hren der Datenoperationen die von der
+	// Oberflï¿½che gesendet werden.
 	//############################################################################
 	
 	//############################################################################
@@ -19,9 +19,9 @@ public class Services {
 	
 	//****************************************************************************
 	// Die Funktion postSQLStatment() stellt eine Verbindung zur Datenbank her
-	// sendet den Ÿbergebenen SQL String, wartet auf die RŸckgabe der Datenbank
-	// und schlie§t die Verbindung wieder.
-	// Die RŸckgabe ist das Result aus dem SQL Statement.
+	// sendet den ï¿½bergebenen SQL String, wartet auf die Rï¿½ckgabe der Datenbank
+	// und schlieï¿½t die Verbindung wieder.
+	// Die Rï¿½ckgabe ist das Result aus dem SQL Statement.
 	//****************************************************************************
 	private ResultSet postSQLStatement(String cSQL, String cFilter) throws ClassNotFoundException, SQLException{
 		String url = ServerConnection.GetDBConnectionString();
@@ -86,10 +86,10 @@ public class Services {
 	
 
 	//****************************************************************************
-	// Finder Methode um SQL String auszufŸhren.
-	// - Funktion ŸberprŸft ob im Where Teil Delete etc Ÿbergeben wurde,
-	// dies fŸhrt zum Fehler.
-	// Die RŸckgabe ist das Wein DTO
+	// Finder Methode um SQL String auszufï¿½hren.
+	// - Funktion ï¿½berprï¿½ft ob im Where Teil Delete etc ï¿½bergeben wurde,
+	// dies fï¿½hrt zum Fehler.
+	// Die Rï¿½ckgabe ist das Wein DTO
 	//****************************************************************************
 	private Wein[] findWein(String cFilter, String cOrderBy, int nMax) throws SQLException, IOException, ClassNotFoundException {
 		java.util.Vector<Wein> v=new java.util.Vector<Wein>();
@@ -120,7 +120,7 @@ public class Services {
 	}
 
 	//****************************************************************************
-	// Die getWeintable() gibt die Weintabelle als Data Transfer Object zurŸck
+	// Die getWeintable() gibt die Weintabelle als Data Transfer Object zurï¿½ck
 	//****************************************************************************
 	public Wein[] getWeinTable(String cFilter) throws SQLException, IOException, ClassNotFoundException{ 
 			return findWein(cFilter,"",-1);
@@ -128,10 +128,10 @@ public class Services {
 	
 	
 	//****************************************************************************
-	// Finder Methode um SQL String auszufŸhren.
-	// - Funktion ŸberprŸft ob im Where Teil Delete etc Ÿbergeben wurde,
-	// dies fŸhrt zum Fehler.
-	// Die RŸckgabe ist das Art DTO
+	// Finder Methode um SQL String auszufï¿½hren.
+	// - Funktion ï¿½berprï¿½ft ob im Where Teil Delete etc ï¿½bergeben wurde,
+	// dies fï¿½hrt zum Fehler.
+	// Die Rï¿½ckgabe ist das Art DTO
 	//****************************************************************************
 	public Art[] findArt(String cFilter, String cOrderBy, int nMax) throws SQLException, IOException, ClassNotFoundException{
 		java.util.Vector<Art> v = new java.util.Vector<Art>();
@@ -158,7 +158,7 @@ public class Services {
 	}
 	
 	//****************************************************************************
-	// Die getArttable() gibt die Arttabelle als Data Transfer Object zurŸck
+	// Die getArttable() gibt die Arttabelle als Data Transfer Object zurï¿½ck
 	//****************************************************************************
 	public Art[] getArtTable(String cFilter) throws SQLException, IOException, ClassNotFoundException{ 
 			return findArt(cFilter,"",-1);
@@ -166,10 +166,10 @@ public class Services {
 	
 	
 	//****************************************************************************
-	// Finder Methode um SQL String auszufŸhren.
-	// - Funktion ŸberprŸft ob im Where Teil Delete etc Ÿbergeben wurde,
-	// dies fŸhrt zum Fehler.
-	// Die RŸckgabe ist das Land DTO
+	// Finder Methode um SQL String auszufï¿½hren.
+	// - Funktion ï¿½berprï¿½ft ob im Where Teil Delete etc ï¿½bergeben wurde,
+	// dies fï¿½hrt zum Fehler.
+	// Die Rï¿½ckgabe ist das Land DTO
 	//****************************************************************************
 	public Land[] findLand(String cFilter, String cOrderBy, int nMax) throws SQLException, IOException, ClassNotFoundException{
 		java.util.Vector<Land> v = new java.util.Vector<Land>();
@@ -196,7 +196,7 @@ public class Services {
 	}
 	
 	//****************************************************************************
-	// Die getArttable() gibt die LandTabelle als Data Transfer Object zurück
+	// Die getArttable() gibt die LandTabelle als Data Transfer Object zurï¿½ck
 	//****************************************************************************
 	public Land[] getLandTable(String cFilter) throws SQLException, IOException, ClassNotFoundException{ 
 			return findLand(cFilter,"",-1);
@@ -204,10 +204,10 @@ public class Services {
 	
 	
 	//****************************************************************************
-	// Finder Methode um SQL String auszufŸhren.
-	// - Funktion ŸberprŸft ob im Where Teil Delete etc Ÿbergeben wurde,
-	// dies fŸhrt zum Fehler.
-	// Die RŸckgabe ist das Rebsorten DTO
+	// Finder Methode um SQL String auszufï¿½hren.
+	// - Funktion ï¿½berprï¿½ft ob im Where Teil Delete etc ï¿½bergeben wurde,
+	// dies fï¿½hrt zum Fehler.
+	// Die Rï¿½ckgabe ist das Rebsorten DTO
 	//****************************************************************************
 	public Rebsorte[] findRebsorte(String cFilter, String cOrderBy, int nMax) throws SQLException, IOException, ClassNotFoundException{
 		java.util.Vector<Rebsorte> v = new java.util.Vector<Rebsorte>();
@@ -234,7 +234,7 @@ public class Services {
 	}
 	
 	//****************************************************************************
-	// Die getRebsorteTable() gibt die RebsorteTabelle als Data Transfer Object zurück
+	// Die getRebsorteTable() gibt die RebsorteTabelle als Data Transfer Object zurï¿½ck
 	//****************************************************************************
 	public Rebsorte[] getRebsorteTable(String cFilter) throws SQLException, IOException, ClassNotFoundException{ 
 			return findRebsorte(cFilter,"",-1);
@@ -242,10 +242,10 @@ public class Services {
 	
 	
 	//****************************************************************************
-	// Finder Methode um SQL String auszufŸhren.
-	// - Funktion ŸberprŸft ob im Where Teil Delete etc Ÿbergeben wurde,
-	// dies fŸhrt zum Fehler.
-	// Die RŸckgabe ist das Region DTO
+	// Finder Methode um SQL String auszufï¿½hren.
+	// - Funktion ï¿½berprï¿½ft ob im Where Teil Delete etc ï¿½bergeben wurde,
+	// dies fï¿½hrt zum Fehler.
+	// Die Rï¿½ckgabe ist das Region DTO
 	//****************************************************************************
 	public Region[] findRegion(String cFilter, String cOrderBy, int nMax) throws SQLException, IOException, ClassNotFoundException{
 		java.util.Vector<Region> v = new java.util.Vector<Region>();
@@ -274,7 +274,7 @@ public class Services {
 	}
 	
 	//****************************************************************************
-	// Die getRegionTable() gibt die RebsorteTabelle als Data Transfer Object zurück
+	// Die getRegionTable() gibt die RebsorteTabelle als Data Transfer Object zurï¿½ck
 	//****************************************************************************
 	public Region[] getRegionTable(String cFilter) throws SQLException, IOException, ClassNotFoundException{ 
 			return findRegion(cFilter,"",-1);
@@ -282,10 +282,10 @@ public class Services {
 	
 	
 	//****************************************************************************
-	// Finder Methode um SQL String auszufŸhren.
-	// - Funktion ŸberprŸft ob im Where Teil Delete etc Ÿbergeben wurde,
-	// dies fŸhrt zum Fehler.
-	// Die RŸckgabe ist das Typ DTO
+	// Finder Methode um SQL String auszufï¿½hren.
+	// - Funktion ï¿½berprï¿½ft ob im Where Teil Delete etc ï¿½bergeben wurde,
+	// dies fï¿½hrt zum Fehler.
+	// Die Rï¿½ckgabe ist das Typ DTO
 	//****************************************************************************
 	public Typ[] findTyp(String cFilter, String cOrderBy, int nMax) throws SQLException, IOException, ClassNotFoundException{
 		java.util.Vector<Typ> v = new java.util.Vector<Typ>();
@@ -312,7 +312,7 @@ public class Services {
 	}
 	
 	//****************************************************************************
-	// Die getTypTable() gibt die RebsorteTabelle als Data Transfer Object zurück
+	// Die getTypTable() gibt die RebsorteTabelle als Data Transfer Object zurï¿½ck
 	//****************************************************************************
 	public Typ[] getTypTable(String cFilter) throws SQLException, IOException, ClassNotFoundException{ 
 			return findTyp(cFilter,"",-1);
@@ -320,10 +320,10 @@ public class Services {
 	
 	
 	//****************************************************************************
-	// Finder Methode um SQL String auszufŸhren.
-	// - Funktion ŸberprŸft ob im Where Teil Delete etc Ÿbergeben wurde,
-	// dies fŸhrt zum Fehler.
-	// Die RŸckgabe ist das Weingut DTO
+	// Finder Methode um SQL String auszufï¿½hren.
+	// - Funktion ï¿½berprï¿½ft ob im Where Teil Delete etc ï¿½bergeben wurde,
+	// dies fï¿½hrt zum Fehler.
+	// Die Rï¿½ckgabe ist das Weingut DTO
 	//****************************************************************************
 	public Weingut[] findWeingut(String cFilter, String cOrderBy, int nMax) throws SQLException, IOException, ClassNotFoundException{
 		java.util.Vector<Weingut> v = new java.util.Vector<Weingut>();
@@ -351,16 +351,16 @@ public class Services {
 	}
 	
 	//****************************************************************************
-	// Die getWeingutTable() gibt die RebsorteTabelle als Data Transfer Object zurück
+	// Die getWeingutTable() gibt die RebsorteTabelle als Data Transfer Object zurï¿½ck
 	//****************************************************************************
 	public Weingut[] getWeingutTable(String cFilter) throws SQLException, IOException, ClassNotFoundException{ 
 			return findWeingut(cFilter,"",-1);
 	}
 	
 	//****************************************************************************
-	// Diese Funktion legt nach Modus einen Datensatz an / löscht einen Datensatz 
-	// verŠndert die Feldwerte des Datensatzes.
-	// RŸckgabe der Funktion: RŸckmeldung der Datenbank.
+	// Diese Funktion legt nach Modus einen Datensatz an / lï¿½scht einen Datensatz 
+	// verï¿½ndert die Feldwerte des Datensatzes.
+	// Rï¿½ckgabe der Funktion: Rï¿½ckmeldung der Datenbank.
 	//****************************************************************************
 	private String refreshDataBase(String TableName, int PK, String Values , boolean newDS){
 		
@@ -370,19 +370,35 @@ public class Services {
 			
 		   return "Neuer Datensatz wurde angelegt";	
 		}
-		// Datensatz muss gelšscht werden.
+		// Datensatz muss gelï¿½scht werden.
 		else if( Values.length() == 0){
 			
-			return "Datensatz wurde gelöscht";
+			return "Datensatz wurde gelï¿½scht";
 		}
 		// Datensatz wird angepasst.
 		else{
 			return "angelegt.";
 		}
 	}
+	//****************************************************************************
+	// Die Funktion ï¿½berprï¿½ft ob das Passwort des Mitarbeiters 
+	//korrekt eingetippt wurde
+	//****************************************************************************
+	public boolean checkPW(int UserID,String cPW) throws ClassNotFoundException, SQLException, IOException{
+		
+		String cFilter ="";
+		cFilter = "ID =" + String.valueOf(UserID);
+		Benutzer[] oUser = findBenutzer(cFilter,"",1,false);
+		
+		if(oUser[0].getPassw() == cPW)
+			return true;
+		
+		else
+			return false;
+	}	
 	
 	//############################################################################
-	// Funktionen zum BefŸllen der einzelnen Data Transfer Objects
+	// Funktionen zum Befï¿½llen der einzelnen Data Transfer Objects
 	//############################################################################
 	
 	//****************************************************************************
