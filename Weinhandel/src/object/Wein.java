@@ -11,6 +11,32 @@ public class Wein {
 	private int m_typ;
 	private int m_art;
 	
+	private String weingutbez;
+	private String weintypbez;
+	private String weinartbez;
+	
+	public String getWeingutBez() {
+		return weingutbez;
+	}
+	public void setWeingutBez(String weingutbez) {
+		this.weingutbez = weingutbez;
+	}
+	
+	public String getWeintypBez() {
+		return weintypbez;
+	}
+	public void setWeintypBez(String weinypbez) {
+		this.weintypbez = weinypbez;
+	}
+	
+	public String getWeinartBez() {
+		return weinartbez;
+	}
+	public void setWeinartBez(String weinartbez) {
+		this.weinartbez = weinartbez;
+	}
+	
+	
 	public int getnr() {
 		return m_nr;
 	}
