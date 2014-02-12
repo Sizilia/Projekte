@@ -10,8 +10,7 @@ public class Services {
 	
 	// wsdl : http://localhost:8080/Weinhandel/wsdl/Services.wsdl
 	
-	private String m_cFilter;
-	
+
 	// Hashtables für Properties
 	private  Hashtable<Integer,String> ArtHt;
 	private  Hashtable<Integer,String> LandHt;
@@ -522,7 +521,7 @@ public class Services {
 	// Die Funktion �berpr�ft ob das Passwort des Mitarbeiters 
 	//korrekt eingetippt wurde
 	//****************************************************************************
-	public void addFilter(String cFieldname, String cFieldValue){
+	public void addFilter(String m_cFilter, String cFieldname, String cFieldValue){
 		if (! m_cFilter.contains(cFieldname))
 			m_cFilter += cFieldname + " = " + cFieldValue;
 	}
