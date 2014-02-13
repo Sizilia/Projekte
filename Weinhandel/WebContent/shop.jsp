@@ -50,7 +50,7 @@
 		<div id="HeaderContent">
 			<h2>Produkte</h2>
 				<p>
-					Hier können Sie Ihren gewünschten Wein raussuchen und in den Warenkorb verschieben. Zur weiteren Hilfe
+					Hier kÃ¶nnen Sie Ihren gewÃ¼nschten Wein raussuchen und in den Warenkorb verschieben. Zur weiteren Hilfe
 					dienen Ihnen die Filter auf der rechten Seite.
 				</p>
 		</div>
@@ -151,29 +151,29 @@
 				</select></p>
 				
 			<!-- Filter Knopf -->
-			<input type="submit" title="btnFilter" value="Filter ausführen"/>
+			<input type="submit" title="btnFilter" value="Filter ausfÃ¼hren"/>
 		<%
 			}else{
 				String art, land, region, typ, rebsorte, weingut;
 				art = request.getParameter("art");
 				if(!art.equals(""))
-					cFilter = dbService.addFilter(cFilter, "art.bez", "'" + art + "' ");
+					cFilter = dbService.addFilter(cFilter, "art.bez", art );
 				land = request.getParameter("land");
 				if(!land.equals(""))
-					cFilter = dbService.addFilter(cFilter, "LAND.NAME", "'" + land + "' ");
+					cFilter = dbService.addFilter(cFilter, "LAND.NAME", land);
 				region = request.getParameter("region");
 				if(!region.equals(""))
-					cFilter = dbService.addFilter(cFilter, "REGION.NAME", "'" + region + "' ");
+					cFilter = dbService.addFilter(cFilter, "REGION.NAME",region);
 				typ = request.getParameter("typ");
 				if(!typ.equals(""))
-					cFilter = dbService.addFilter(cFilter, "TYP.BEZ", "'" + typ + "' ");
+					cFilter = dbService.addFilter(cFilter, "TYP.BEZ", typ);
 				rebsorte = request.getParameter("rebsorte");
 				if(!rebsorte.equals(""))
-					cFilter = dbService.addFilter(cFilter, "REBSORTE.NAME",  "'" + rebsorte + "' ");
+					cFilter = dbService.addFilter(cFilter, "REBSORTE.NAME",rebsorte);
 				weingut = request.getParameter("weingut");
 				if(!weingut.equals(""))
-					cFilter = dbService.addFilter(cFilter, "WEINGUT.NAME",  " '" + weingut + "'");
-				// Ausgewählte Werte der Comboboxen ausgeben
+					cFilter = dbService.addFilter(cFilter, "WEINGUT.NAME", weingut);
+				// AusgewÃ¤hlte Werte der Comboboxen ausgeben
 				out.print("<b>Art</b>:<p>" + art + "</p>");
 				out.print("<b>Land:</b><p>" + land + "</p>");
 				out.print("<b>Region:</b><p>" + region + "</p>");
