@@ -1,16 +1,21 @@
 package basic;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.sql.*;
+import java.util.HashSet;
 import java.util.Hashtable;
 
+import com.mysql.jdbc.Field;
+
 import object.*;
+import basic.Globals;
 
 public class Services {
 	
-	// wsdl : http://localhost:8080/Weinhandel/wsdl/Services.wsdl
+	// wsdl-File : http://localhost:8080/Weinhandel/wsdl/Services.wsdl
 	
-
 	// Hashtables fuer Properties
 	private  Hashtable<Integer,String> ArtHt;
 	private  Hashtable<Integer,String> LandHt;
@@ -18,262 +23,178 @@ public class Services {
 	private  Hashtable<Integer,String> TypHt;
 	private  Hashtable<Integer,String> RegionHt;
 	private  Hashtable<Integer,String> WeingutHt;
-	
-	
+	private  Globals global = new  Globals();
 	
 	//############################################################################
 	// Die Service Klasse stellt die Verbindung zur Weinhandel Datenbank her.
-	// Sie enth���lt die Methoden zum Ausf���hren der Datenoperationen die von der
-	// Oberfl���che gesendet werden.
+	// Sie enthaelt die Methoden zum Ausfuehren der Datenoperationen die von der
+	// Oberflaeche gesendet werden.
 	//############################################################################
 	
 	//############################################################################
 	// Finder der einzelnen DTO's
 	//############################################################################
 	//****************************************************************************
-	// Finder Methode um SQL String auszuf���hren.
-	// - Funktion ���berpr���ft ob im Where Teil Delete etc ���bergeben wurde,
+	// Finder Methode um SQL String auszufuehren.
+	// - Funktion ueberprueft ob im Where Teil Delete etc uebergeben wurde,
 	// dies f���hrt zum Fehler.
 	// Die R���ckgabe ist das Wein DTO
 	//****************************************************************************
-	private Wein[] findWein(String cFilter, String cOrderBy, int nMax, boolean bAdmin) throws SQLException, IOException, ClassNotFoundException {
-		java.util.Vector<Wein> v=new java.util.Vector<Wein>();
-		Wein dto;
-		String cSQL = "SELECT * FROM wein "+ 
-					  "INNER JOIN weingut ON wein.weingut = weingut.nr " +
-					  "INNER JOIN region ON weingut.region = region.nr " +
-					  "INNER JOIN land ON region.land = land.nr " +
-					  "INNER JOIN typ ON wein.typ = typ.nr " +
-					  "INNER JOIN art ON wein.art = art.nr " + 
-					  "INNER JOIN wein_rebsorte ON wein.nr = wein_rebsorte.wein " + 
-					  "INNER JOIN rebsorte ON wein_rebsorte.rebsorte= rebsorte.nr ";
-
-		ResultSet results = postSQLStatement(cSQL, cFilter, bAdmin);
-		//insert filter in SQL-statement
-		boolean notDone = results.next();
-		int nCount = 1;
-		while(notDone & (nCount <= nMax || nMax == -1)) {
-			dto=new Wein();
-			//dto.setnr(results.getInt("nr"));
-			dto.setname(results.getString("name"));
-			dto.setjahrgang(results.getInt("jahrgang"));
-			//dto.setbeschr(results.getString("beschr"));
-			dto.setpreis(results.getFloat("preis"));
-			dto.setweingut(results.getInt("weingut"));
-			dto.settyp(results.getInt("typ"));
-			dto.setart(results.getInt("art"));
-			v.add(dto);
-			notDone = results.next();
-			nCount++;
-		}
+	private Object[] findObject(Object obj,String cFilter) throws NoSuchFieldException, SecurityException, ClassNotFoundException, SQLException, IllegalAccessException, IllegalArgumentException, InvocationTargetException{
 		
-		Wein[] result=new Wein[v.size()];
-		for (int i=0; i<v.size();i++)
-			result[i]=(Wein) v.elementAt(i);
+		String cSQL="";
+		Class<? extends Object> dtoclass = obj.getClass();
+		// Tabellenname herrausfinden
+		String cTablename = dtoclass.getName();
+		int n = 0;
+		n =  cTablename.indexOf(".") +1;
+		cTablename = cTablename.substring(n);
+		Utils.prs("Tabellenname", cTablename);
+		
+		// Select Statement erstellen:
+		switch(cTablename){
+		case "Wein"   : cSQL = global.gl_WeinSQL;
+						break;
+		case "weingut": cSQL = global.gl_WeingutSQL;
+						break;
+		case "Art"    : cSQL = global.gl_ArtSQL;
+		} 
+		java.util.Vector<Object> v = new java.util.Vector<Object>();
+		ResultSet results          = selectSQLStatement(cSQL,cFilter);
+		
+		Object oRes = null;
+		Object arglist[] = new Object[1];
+		boolean notDone = results.next();
+		while(notDone) { // Schleife über SQL Tabelle
+			Method[] methods = obj.getClass().getDeclaredMethods();
+			int i=1;
+			for( Method m : methods){	// Schleife über alle Methoden
+				 if( m.getName().contains("set") && ! m.getName().contains("Bezeichnung")){
+					oRes = results.getObject(i);
+					if(oRes != null){
+						if(oRes instanceof java.math.BigDecimal)
+							arglist[0] =  results.getFloat(i); 
+						else
+							arglist[0] = oRes; 
+							
+						m.invoke(obj, arglist);
+					}
+					 i++;
+				 }
+			}
+			v.add(obj);
+			notDone = results.next();
+		} 
+		Object[] result = new Object[v.size()];
+		for(int i = 0; i < v.size(); i++){
+			result[i] = (Object) v.elementAt(i);
+		}
 		return result;
+	}
+		
+	//****************************************************************************
+	// Die getArttable() gibt die Arttabelle als Data Transfer Object zurueck
+	//****************************************************************************
+	public Wein[] getWeintable(String cFilter) throws NoSuchFieldException, SecurityException, ClassNotFoundException, SQLException, IllegalAccessException, IllegalArgumentException, InvocationTargetException{
+		Wein oWein = new Wein();
+		Object[] result = findObject((Object) oWein,cFilter);
+		Wein[] res = new Wein[result.length];
+		for(int i = 0; i < result.length; i++)
+			res[i] = (Wein) result[i];
+		
+		return res;
 	}
 	
 	//****************************************************************************
-	// Finder Methode um SQL String auszuf���hren.
-	// - Funktion ���berpr���ft ob im Where Teil Delete etc ���bergeben wurde,
-	// dies f���hrt zum Fehler.
-	// Die R���ckgabe ist das Art DTO
+	// Die getArttable() gibt die Arttabelle als Data Transfer Object zurueck
 	//****************************************************************************
-	private Art[] findArt(String cFilter, String cOrderBy, int nMax, boolean bAdmin) throws SQLException, IOException, ClassNotFoundException{
-		java.util.Vector<Art> v = new java.util.Vector<Art>();
-		Art dto;
-		String cSQL = "SELECT *  FROM art";
-		ResultSet results = postSQLStatement(cSQL, cFilter, bAdmin);
-		//insert filter in SQL-Statement
-		boolean notDone = results.next();
-		int nCount = 1;
-		while(notDone & (nCount <= nMax || nMax == -1)){
-			dto = new Art();
-			dto.setBez(results.getString("bez"));
-			dto.setNr(results.getInt("nr"));
-			v.add(dto);
-			notDone = results.next();
-			nCount++;
-		}
-		Art[] result = new Art[v.size()];
-		for(int i = 0; i < v.size(); i++){
-			result[i] = (Art) v.elementAt(i);
-		}
+	public Art[] getArtTable(String cFilter) throws SQLException, IOException, ClassNotFoundException, NoSuchFieldException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException{ 
+		Art oArt = new Art();
+		Object[] result = findObject((Object) oArt,cFilter);
+		Art[] res = new Art[result.length];
+		for(int i = 0; i < result.length; i++)
+			res[i] = (Art) result[i];
 		
-		return result;
+		return res;
 	}
 	
 	//****************************************************************************
-	// Finder Methode um SQL String auszuf���hren.
-	// - Funktion ���berpr���ft ob im Where Teil Delete etc ���bergeben wurde,
-	// dies f���hrt zum Fehler.
-	// Die R���ckgabe ist das Land DTO
+	// Die getArttable() gibt die LandTabelle als Data Transfer Object zur���ck
 	//****************************************************************************
-	private Land[] findLand(String cFilter, String cOrderBy, int nMax, boolean bAdmin) throws SQLException, IOException, ClassNotFoundException{
-		java.util.Vector<Land> v = new java.util.Vector<Land>();
-		Land dto;
-		String cSQL = "SELECT *  FROM land";
-		ResultSet results = postSQLStatement(cSQL, cFilter, bAdmin);
-		//insert filter in SQL-Statement
-		boolean notDone = results.next();
-		int nCount = 1;
-		while(notDone & (nCount <= nMax || nMax == -1)){
-			dto = new Land();
-			dto.setName(results.getString("name"));
-			dto.setNr(results.getInt("nr"));
-			v.add(dto);
-			notDone = results.next();
-			nCount++;
-		}
-		Land[] result = new Land[v.size()];
-		for(int i = 0; i < v.size(); i++){
-			result[i] = (Land) v.elementAt(i);
-		}
+	public Land[] getLandTable(String cFilter) throws SQLException, IOException, ClassNotFoundException, NoSuchFieldException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException{ 
+		Land oLand = new Land();
+		Object[] result = findObject((Object) oLand,cFilter);
+		Land[] res = new Land[result.length];
+		for(int i = 0; i < result.length; i++)
+			res[i] = (Land) result[i];
 		
-		return result;
+		return res;
 	}
 
 	//****************************************************************************
-	// Finder Methode um SQL String auszuf���hren.
-	// - Funktion ���berpr���ft ob im Where Teil Delete etc ���bergeben wurde,
-	// dies f���hrt zum Fehler.
-	// Die R���ckgabe ist das Rebsorten DTO
+	// Die getRebsorteTable() gibt die RebsorteTabelle als Data Transfer Object zur���ck
 	//****************************************************************************
-	private Rebsorte[] findRebsorte(String cFilter, String cOrderBy, int nMax, boolean bAdmin) throws SQLException, IOException, ClassNotFoundException{
-		java.util.Vector<Rebsorte> v = new java.util.Vector<Rebsorte>();
-		Rebsorte dto;
-		String cSQL = "SELECT *  FROM rebsorte";
-		ResultSet results = postSQLStatement(cSQL, cFilter, bAdmin);
-		//insert filter in SQL-Statement
-		boolean notDone = results.next();
-		int nCount = 1;
-		while(notDone & (nCount <= nMax || nMax == -1)){
-			dto = new Rebsorte();
-			dto.setName(results.getString("name"));
-			dto.setNr(results.getInt("nr"));
-			v.add(dto);
-			notDone = results.next();
-			nCount++;
-		}
-		Rebsorte[] result = new Rebsorte[v.size()];
-		for(int i = 0; i < v.size(); i++){
-			result[i] = (Rebsorte) v.elementAt(i);
-		}
+	public Rebsorte[] getRebsorteTable(String cFilter) throws SQLException, IOException, ClassNotFoundException, NoSuchFieldException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException{ 
+		Rebsorte oRebsorte = new Rebsorte();
+		Object[] result = findObject((Object) oRebsorte,cFilter);
+		Rebsorte[] res = new Rebsorte[result.length];
+		for(int i = 0; i < result.length; i++)
+			res[i] = (Rebsorte) result[i];
 		
-		return result;
-	}
-	
-	private Weingut[] findWeingut(String cFilter, String cOrderBy, int nMax, boolean bAdmin) throws SQLException, IOException, ClassNotFoundException{
-		java.util.Vector<Weingut> v = new java.util.Vector<Weingut>();
-		Weingut dto;
-		String cSQL = "SELECT *  FROM rebsorte";
-		ResultSet results = postSQLStatement(cSQL, cFilter, bAdmin);
-		//insert filter in SQL-Statement
-		boolean notDone = results.next();
-		int nCount = 1;
-		while(notDone & (nCount <= nMax || nMax == -1)){
-			dto = new Weingut();
-			dto.setName(results.getString("name"));
-			dto.setNr(results.getInt("nr"));
-			v.add(dto);
-			notDone = results.next();
-			nCount++;
-		}
-		Weingut[] result = new Weingut[v.size()];
-		for(int i = 0; i < v.size(); i++){
-			result[i] = (Weingut) v.elementAt(i);
-		}
-		
-		return result;
-	}
-
-	//****************************************************************************
-	// Finder Methode um SQL String auszuf���hren.
-	// - Funktion ���berpr���ft ob im Where Teil Delete etc ���bergeben wurde,
-	// dies f���hrt zum Fehler.
-	// Die R���ckgabe ist das Region DTO
-	//****************************************************************************
-	private Region[] findRegion(String cFilter, String cOrderBy, int nMax, boolean bAdmin) throws SQLException, IOException, ClassNotFoundException{
-		java.util.Vector<Region> v = new java.util.Vector<Region>();
-		Region dto;
-		String cSQL = "SELECT *  FROM region";
-		ResultSet results = postSQLStatement(cSQL, cFilter, bAdmin);
-		//insert filter in SQL-Statement
-		boolean notDone = results.next();
-		int nCount = 1;
-		while(notDone & (nCount <= nMax || nMax == -1)){
-			dto = new Region();
-			dto.setName(results.getString("name"));
-			dto.setNr(results.getInt("nr"));
-			dto.setBeschr(results.getString("beschr"));
-			dto.setLandID(results.getInt("land"));
-			v.add(dto);
-			notDone = results.next();
-			nCount++;
-		}
-		Region[] result = new Region[v.size()];
-		for(int i = 0; i < v.size(); i++){
-			result[i] = (Region) v.elementAt(i);
-		}
-		
-		return result;
+		return res;
 	}
 	
 	//****************************************************************************
-	// Finder Methode um SQL String auszuf���hren.
-	// - Funktion ���berpr���ft ob im Where Teil Delete etc ���bergeben wurde,
-	// dies f���hrt zum Fehler.
-	// Die R���ckgabe ist das Typ DTO
+	// Die getRegionTable() gibt die RebsorteTabelle als Data Transfer Object zur���ck
 	//****************************************************************************
-	private Typ[] findTyp(String cFilter, String cOrderBy, int nMax, boolean bAdmin) throws SQLException, IOException, ClassNotFoundException{
-		java.util.Vector<Typ> v = new java.util.Vector<Typ>();
-		Typ dto;
-		String cSQL = "SELECT *  FROM typ";
-		ResultSet results = postSQLStatement(cSQL, cFilter, bAdmin);
-		//insert filter in SQL-Statement
-		boolean notDone = results.next();
-		int nCount = 1;
-		while(notDone & (nCount <= nMax || nMax == -1)){
-			dto = new Typ();
-			dto.setBez(results.getString("bez"));
-			dto.setNr(results.getInt("nr"));
-			v.add(dto);
-			notDone = results.next();
-			nCount++;
-		}
-		Typ[] result = new Typ[v.size()];
-		for(int i = 0; i < v.size(); i++){
-			result[i] = (Typ) v.elementAt(i);
-		}
+	public Region[] getRegionTable(String cFilter) throws SQLException, IOException, ClassNotFoundException, NoSuchFieldException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException{ 
+		Region oRegion = new Region();
+		Object[] result = findObject((Object) oRegion,cFilter);
+		Region[] res = new Region[result.length];
+		for(int i = 0; i < result.length; i++)
+			res[i] = (Region) result[i];
 		
-		return result;
-	}
-	// Finder f��r Benutzer
-	private Benutzer[] findBenutzer(String cFilter, String cOrderBy, int nMax, boolean bAdmin) throws SQLException, IOException, ClassNotFoundException{
-		java.util.Vector<Benutzer> v = new java.util.Vector<Benutzer>();
-		Benutzer dto;
-		String cSQL = "SELECT *  FROM Benutzer";
-		ResultSet results = postSQLStatement(cSQL, cFilter, bAdmin);
-		//insert filter in SQL-Statement
-		boolean notDone = results.next();
-		int nCount = 1;
-		while(notDone & (nCount <= nMax || nMax == -1)){
-			dto = new Benutzer();
-			dto.setID(results.getInt("ID"));
-			dto.setPassw(results.getString("Passwort"));
-			v.add(dto);
-			notDone = results.next();
-			nCount++;
-		}
-		Benutzer[] result = new Benutzer[v.size()];
-		for(int i = 0; i < v.size(); i++){
-			result[i] = (Benutzer) v.elementAt(i);
-		}
-		
-		return result;
+		return res;
 	}
 	
+	//****************************************************************************
+	// Die getTypTable() gibt die RebsorteTabelle als Data Transfer Object zur���ck
+	//****************************************************************************
+	public Typ[] getTypTable(String cFilter) throws SQLException, IOException, ClassNotFoundException, NoSuchFieldException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException{ 
+		Typ oTyp = new Typ();
+		Object[] result = findObject((Object) oTyp,cFilter);
+		Typ[] res = new Typ[result.length];
+		for(int i = 0; i < result.length; i++)
+			res[i] = (Typ) result[i];
+		
+		return res;
+	}
 	
+	//****************************************************************************
+	// Die getWeingutTable() gibt die RebsorteTabelle als Data Transfer Object zur���ck
+	//****************************************************************************
+	public Weingut[] getWeingutTable(String cFilter) throws SQLException, IOException, ClassNotFoundException, NoSuchFieldException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException{ 
+		Weingut oWeingut = new Weingut();
+		Object[] result = findObject((Object) oWeingut,cFilter);
+		Weingut[] res = new Weingut[result.length];
+		for(int i = 0; i < result.length; i++)
+			res[i] = (Weingut) result[i];
+		
+		return res;
+	}
+	
+	//****************************************************************************
+	// Die getWeingutTable() gibt die RebsorteTabelle als Data Transfer Object zur���ck
+	//****************************************************************************
+	private Benutzer[] getBenutzer(String cFilter) throws SQLException, IOException, ClassNotFoundException, NoSuchFieldException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException{ 
+		Benutzer oBenutzer = new Benutzer();
+		Object[] result = findObject((Object) oBenutzer,cFilter);
+		Benutzer[] res = new Benutzer[result.length];
+		for(int i = 0; i < result.length; i++)
+			res[i] = (Benutzer) result[i];
+		
+		return res;
+	}
 	
 	
 	//############################################################################
@@ -286,17 +207,18 @@ public class Services {
 	// und schlie���t die Verbindung wieder.
 	// Die R���ckgabe ist das Result aus dem SQL Statement.
 	//****************************************************************************
-	private ResultSet postSQLStatement(String cSQL, String cFilter, boolean bAdmin) throws ClassNotFoundException, SQLException{
-		String url = ServerConnection.GetDBConnectionString();
-		String user = ServerConnection.GetDBLoginUser();
+	private ResultSet selectSQLStatement(String cSQL, String cFilter) throws ClassNotFoundException, SQLException{
+		
+		String url    = ServerConnection.GetDBConnectionString();
+		String user   = ServerConnection.GetDBLoginUser();
 		String userPw = ServerConnection.GetDBLoginPW();
+		
 		ResultSet results = null;
 		Statement query = null;
 		Connection connect = null;
 		
-		
 		cSQL = cSQL.toUpperCase();
-		if (!bAdmin && cFilter.length() != 0){
+		if (global.gl_bAdmin && cFilter.length() != 0){
 			//Exception on edit-statements
 			cFilter = cFilter.toUpperCase();
 			int nPosDel = cFilter.indexOf("DELETE");
@@ -329,19 +251,36 @@ public class Services {
 		connect = DriverManager.getConnection(url, user, userPw);
 		System.out.println(cSQL);
 		query = connect.createStatement();
-		results = query.executeQuery(cSQL);
-		Utils.prs("SQL-Statement", cSQL);
-		
-		
+   	    results = query.executeQuery(cSQL);
 		return results;		
+	}
+	//****************************************************************************
+	// Die Funktion postSQLStatment() stellt eine Verbindung zur Datenbank her
+	// sendet den ���bergebenen SQL String, wartet auf die R���ckgabe der Datenbank
+	// und schlie���t die Verbindung wieder.
+	// Die R���ckgabe ist das Result aus dem SQL Statement.
+	//****************************************************************************
+	private void insertSQLStatement(String cSQL) throws ClassNotFoundException, SQLException{
+		String url = ServerConnection.GetDBConnectionString();
+		String user = ServerConnection.GetDBLoginUser();
+		String userPw = ServerConnection.GetDBLoginPW();
+		Statement query = null;
+		Connection connect = null;
+	
+		//Execute Query
+		Class.forName("com.mysql.jdbc.Driver");
+		connect = DriverManager.getConnection(url, user, userPw);
+		Utils.prs("InsertSQLStatement", cSQL);
+		query = connect.createStatement();
+	    query.executeUpdate(cSQL);	
 	}
 	
 	//****************************************************************************
-	// Hashtable f��r Art
+	// Hashtable fuer Art
 	//****************************************************************************		
-	private void fillArtHt() throws ClassNotFoundException, SQLException, IOException{
+	private void fillArtHt() throws ClassNotFoundException, SQLException, IOException, NoSuchFieldException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException{
 		
-		Art[] art = findArt("","",-1,false);
+		Art[] art = getArtTable("");
 		Hashtable <Integer,String> ht = new Hashtable<Integer,String>();
 		
 		for (int i = 0 ; i < art.length; i++){
@@ -350,13 +289,11 @@ public class Services {
 		ArtHt = ht;
 	}
 	
-	
 	//****************************************************************************
-	// Hashtable f��r Land
+	// Hashtable fuer Land
 	//****************************************************************************		
-	private void fillLandHt() throws ClassNotFoundException, SQLException, IOException{
-		
-		Land[] land = findLand("","",-1,false);
+	private void fillLandHt() throws Exception {
+		Land[] land = getLandTable("");
 		Hashtable <Integer,String> ht = new Hashtable<Integer,String>();
 		
 		for (int i = 0 ; i < land.length; i++){
@@ -368,9 +305,9 @@ public class Services {
 	//****************************************************************************
 	// Hashtable f��r Region
 	//****************************************************************************		
-	private void fillRebsorteHt() throws ClassNotFoundException, SQLException, IOException{
+	private void fillRebsorteHt() throws Exception{
 		
-		Rebsorte[] rebsorte = findRebsorte("","",-1,false);
+		Rebsorte[] rebsorte = getRebsorteTable("");
 		Hashtable <Integer,String> ht = new Hashtable<Integer,String>();
 		
 		for (int i = 0 ; i < rebsorte.length; i++){
@@ -382,9 +319,9 @@ public class Services {
 	//****************************************************************************
 	// Hashtable f��r Typ
 	//****************************************************************************		
-	private void fillTypHt() throws ClassNotFoundException, SQLException, IOException{
+	private void fillTypHt() throws Exception {
 		
-		Typ[] typ = findTyp("","",-1,false);
+		Typ[] typ = getTypTable("");
 		Hashtable <Integer,String> ht = new Hashtable<Integer,String>();
 		
 		for (int i = 0 ; i < typ.length; i++){
@@ -395,9 +332,9 @@ public class Services {
 	//****************************************************************************
 	// Hashtable f��r Region
 	//****************************************************************************		
-	private void fillRegionHt() throws ClassNotFoundException, SQLException, IOException{
+	private void fillRegionHt() throws Exception{
 		
-		Region[] region = findRegion("","",-1,false);
+		Region[] region = getRegionTable("");
 		Hashtable <Integer,String> ht = new Hashtable<Integer,String>();
 		
 		for (int i = 0 ; i < region.length; i++){
@@ -409,9 +346,9 @@ public class Services {
 	//****************************************************************************
 	// Hashtable f��r Weingut
 	//****************************************************************************		
-	private void fillWeingutHt() throws ClassNotFoundException, SQLException, IOException{
+	private void fillWeingutHt() throws Exception{
 		
-		Weingut[] weingut = findWeingut("","",-1,false);
+		Weingut[] weingut = getWeingutTable("");
 		Hashtable <Integer,String> ht = new Hashtable<Integer,String>();
 		
 		for (int i = 0 ; i < weingut.length; i++){
@@ -422,74 +359,6 @@ public class Services {
 
 	
 
-	
-	
-	
-	//****************************************************************************
-	// Die getWeintable() gibt die Weintabelle als Data Transfer Object zur���ck
-	//****************************************************************************
-	public Wein[] getWeinTable(String cFilter, boolean bAdmin) throws SQLException, IOException, ClassNotFoundException{ 
-		
-		Wein[] weintabelle = findWein(cFilter,"",-1, bAdmin);
-		
-		// Bef��llung der HT
-		fillArtHt();
-		fillLandHt();
-		fillRebsorteHt();
-		fillTypHt();
-		fillRegionHt();
-		fillWeingutHt();
-		
-		for(int i=0 ; i < weintabelle.length ; i++){			
-			weintabelle[i].setWeinartBez(ArtHt.get(weintabelle[i].getart()));
-			weintabelle[i].setWeingutBez(WeingutHt.get(weintabelle[i].getweingut()));
-			weintabelle[i].setWeintypBez(TypHt.get(weintabelle[i].gettyp()));
-		}
-		
-		return weintabelle;
-	}
-	
-	//****************************************************************************
-	// Die getArttable() gibt die Arttabelle als Data Transfer Object zur���ck
-	//****************************************************************************
-	public Art[] getArtTable(String cFilter, boolean bAdmin) throws SQLException, IOException, ClassNotFoundException{ 
-			return findArt(cFilter,"",-1, bAdmin);
-	}
-	
-	//****************************************************************************
-	// Die getArttable() gibt die LandTabelle als Data Transfer Object zur���ck
-	//****************************************************************************
-	public Land[] getLandTable(String cFilter, boolean bAdmin) throws SQLException, IOException, ClassNotFoundException{ 
-			return findLand(cFilter,"",-1, bAdmin);
-	}
-
-	//****************************************************************************
-	// Die getRebsorteTable() gibt die RebsorteTabelle als Data Transfer Object zur���ck
-	//****************************************************************************
-	public Rebsorte[] getRebsorteTable(String cFilter, boolean bAdmin) throws SQLException, IOException, ClassNotFoundException{ 
-			return findRebsorte(cFilter,"",-1, bAdmin);
-	}
-	
-	//****************************************************************************
-	// Die getRegionTable() gibt die RebsorteTabelle als Data Transfer Object zur���ck
-	//****************************************************************************
-	public Region[] getRegionTable(String cFilter, boolean bAdmin) throws SQLException, IOException, ClassNotFoundException{ 
-			return findRegion(cFilter,"",-1, bAdmin);
-	}
-	
-	//****************************************************************************
-	// Die getTypTable() gibt die RebsorteTabelle als Data Transfer Object zur���ck
-	//****************************************************************************
-	public Typ[] getTypTable(String cFilter, boolean bAdmin) throws SQLException, IOException, ClassNotFoundException{ 
-			return findTyp(cFilter,"",-1, bAdmin);
-	}
-	
-	//****************************************************************************
-	// Die getWeingutTable() gibt die RebsorteTabelle als Data Transfer Object zur���ck
-	//****************************************************************************
-	public Weingut[] getWeingutTable(String cFilter, boolean bAdmin) throws SQLException, IOException, ClassNotFoundException{ 
-			return findWeingut(cFilter,"",-1, bAdmin);
-	}
 	
 	//****************************************************************************
 	// Die Funktion ���berpr���ft ob das Passwort des Mitarbeiters 
@@ -514,7 +383,7 @@ public class Services {
 		
 		String cFilter ="";
 		cFilter = "Username = '" + Username + "'";
-		Benutzer[] oUser = findBenutzer(cFilter,"",1,false);
+		Benutzer[] oUser = getBenutzer(cFilter);
 		if (oUser.length == 0)
 			throw new Exception("Benutzer ist nicht vorhanden");
 		
@@ -527,11 +396,16 @@ public class Services {
 	}
 	
 	// Erstellt ein WeinDTO mit allen übergebenen Feldern an
-	public Wein StringToWeinDto(int nId){
+	public Wein stringToWeinDto(int nId,String cWeinname, int nArtId, int nTyp, String cBeschreibung,double nPreis, int nJahrgang){
 		
 		Wein oWein = new Wein();
 		oWein.setnr(nId);
-		
+		oWein.setart(nArtId);
+		oWein.setbeschr(cBeschreibung);
+		oWein.setjahrgang(nJahrgang);
+		oWein.setname(cWeinname);
+		oWein.setpreis(nPreis);
+		oWein.settyp(nTyp);		
 		return oWein;
 	}
 	
@@ -540,30 +414,32 @@ public class Services {
 	// aktualisiert den Datensatz
 	// Die Rückgabe ist der angefügte Datensatz
 	//****************************************************************************
-	public void RefreshWeintable(Wein oWein) throws ClassNotFoundException, SQLException{
+	public void refreshWeintable(Wein oWein) throws ClassNotFoundException, SQLException{
 		
 		// Wein ist noch nicht in der Datenbank vorhanden
 		if (oWein.getnr() == -1)
-			 InsertWein(oWein); 
+			 insertWein(oWein); 
 		else
-			UpdateWein(oWein);
+			updateWein(oWein);
 			
 	}
 	
 	// Führt ein Update Befehl für die Tabelle durch. 
-	private void UpdateWein(Wein oWein){
+	private void updateWein(Wein oWein) throws ClassNotFoundException, SQLException{
 		
-		
+		String cSQL = "";
+		cSQL += "UPDATE wein SET name='" + oWein.getname() + "',";
+		cSQL += "jahrgang =" + String.valueOf(oWein.getjahrgang()) + ";";
+		cSQL += "beschr = '" + oWein.getbeschr() + "',";
+		cSQL += "preis = " + String.valueOf(oWein.getpreis()) + ",";
+		cSQL += "weingut = " + String.valueOf(oWein.getweingut()) + ",";  
+		cSQL += "typ = " + String.valueOf(oWein.gettyp()) + ","; 
+		cSQL += "art = " + String.valueOf(oWein.getart()) + ","; 
+		insertSQLStatement(cSQL);
 	}
-	
 
 	// Funktion erstellt in der Datenbank einen neuen Wein hinzu.
-	private Wein InsertWein(Wein oWein) throws ClassNotFoundException, SQLException {
-		
-		/*
-		INSERT INTO Store_Information (Store_Name, Sales, Txn_Date)
-		VALUES ('Los Angeles', 900, '10.Jan.1999');
-		*/
+	private void insertWein(Wein oWein) throws ClassNotFoundException, SQLException {		
 		String cSQL ="";
 		
 		cSQL += "INSERT INTO wein (name,jahrgang,beschr,preis,weingut,typ,art) ";
@@ -574,17 +450,10 @@ public class Services {
 		cSQL += String.valueOf(oWein.getweingut()) + ",";
 		cSQL += String.valueOf(oWein.getweingut()) + ",";
 		cSQL += String.valueOf(oWein.getart()) + ")";
-		
-		
-		postSQLStatement(cSQL,"",true);
-		
-		return null;
+		insertSQLStatement(cSQL);
 	}
-	
 	//****************************************************************************
 	// Die Funktion getCustomerAdress() holt sich aus der Weinhandel Datenbank die 
 	//Rechnungs und Lieferanschrift
-	//****************************************************************************
-	
-	
+	//****************************************************************************	
 }
