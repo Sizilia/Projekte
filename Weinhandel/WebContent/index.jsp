@@ -7,12 +7,10 @@
 <link href="style.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
-<div class="style3"></div><div class="style_2"><span class="style3"><a><strong></strong></a></span></div>
 <div id="wrap">
 	<!-- Start "HeaderBereich" -->
 	<div id="topbar">
 	  <h1 id="sitename"><a>Weinhandlung SW & DA</a></h1>
-	  <div id="menus">
 	  	<ul id="topmenu">
 			<li>
 				<h4><a href="index.jsp">Home</a></h4>
@@ -24,7 +22,6 @@
 				<h4><a href="Verwaltung.jsp">Mitarbeiterlogin</a></h4>
 			</li>
 		</ul>
-	  </div>
 	</div>
 	<div id="header">
 	<!-- Beinhaltet nur das Headerbild -->
@@ -42,16 +39,9 @@
 				Bei weiteren Fragen schreiben Sie uns eine E-Mail support@weinhandelswda.com oder rufen Sie unsere Hotline an
 				unter der Nummer 089-123456789876.
 			</p>
-		<!-- Sidebar -->
-		<div id="sidebar">
-
-		</div>
-		<!-- SidebarContent -->
-
 
 	</div>
 	<!-- Ende ContentBereich -->
-
 </div>
 
 <div id="footer">
