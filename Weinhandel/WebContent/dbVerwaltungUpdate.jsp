@@ -8,12 +8,10 @@
 <link href="style.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
-<div class="style3"></div><div class="style_2"><span class="style3"><a><strong></strong></a></span></div>
 <div id="wrap">
 	<!-- Start "HeaderBereich" -->
 	<div id="topbar">
 	  <h1 id="sitename"><a>Weinhandlung SW & DA</a></h1>
-	  <div id="menus">
 	  	<ul id="topmenu">
 			<li>
 				<h4><a href="index.jsp">Home</a></h4>
@@ -25,7 +23,6 @@
 				<h4><a href="Verwaltung.jsp">Mitarbeiterlogin</a></h4>
 			</li>
 		</ul>
-	  </div>
 	</div>
 	<div id="header">
 	<!-- Beinhaltet nur das Headerbild -->
@@ -40,18 +37,11 @@
 		</div>
 			<center>
 				<p>
-					Hier können Daten aus der Weindatenbank bearbeitet werden!
+					Hier kÃ¶nnen Daten aus der Weindatenbank bearbeitet werden!
 				</p>				           	
             </center>            
-		<!-- Sidebar -->
-		<div id="sidebar">
-
-		</div>
-		<!-- SidebarContent -->
-
 	</div>
 	<!-- Ende ContentBereich -->
-
 </div>
 
 <div id="footer">
