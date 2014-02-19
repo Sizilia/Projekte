@@ -1,5 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN">
-<%@page import="java.io.PrintWriter"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@page import="object.*"%>
 <%@page import="basic.Services"%>
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -7,20 +7,23 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>Shop | Weinhandel SW & DA</title>
 <link href="style.css" rel="stylesheet" type="text/css" />
-</head>
-<body>
 <%
 	Services dbService = new Services();
-	Wein[] weinTable = dbService.getWeinTable("", false);
-	Art[] artTable = dbService.getArtTable("", false);
-	Land[] landTable = dbService.getLandTable("", false);
-	Rebsorte[] rebsorteTable = dbService.getRebsorteTable("", false);
-	Region[] regionTable = dbService.getRegionTable("", false);
-	Typ[] typTable = dbService.getTypTable("", false);
-	Weingut[] weingutTable = dbService.getWeingutTable("", false);
-	String cFilter = "";
+	Art[] artTable = dbService.getArtTable("");
+	request.setAttribute("artTable", artTable);
+	Land[] landTable = dbService.getLandTable("");
+	request.setAttribute("landTable", landTable);
+	Rebsorte[] rebsorteTable = dbService.getRebsorteTable("");
+	request.setAttribute("rebsorteTable", rebsorteTable);
+	Region[] regionTable = dbService.getRegionTable("");
+	request.setAttribute("regionTable", regionTable);
+	Typ[] typTable = dbService.getTypTable("");
+	request.setAttribute("typTable", typTable);
+	Weingut[] weingutTable = dbService.getWeingutTable("");
+	request.setAttribute("weingutTable", weingutTable);
 %>
-<div class="style3"></div><div class="style_2"><span class="style3"><a><strong></strong></a></span></div>
+</head>
+<body>
 <div id="wrap">
 	<!-- Start "HeaderBereich" -->
 	<div id="topbar">
@@ -39,157 +42,133 @@
 		</ul>
 	  </div>
 	</div>
+	
 	<div id="header">
 	<!-- Beinhaltet nur das Headerbild -->
 	</div>
 	<!-- Ende "Headerbereich" -->
-
+	
+	<form method="post" action="ShopServlet">
+	
 	<!--  Beginn Content Bereich -->
-	<div id="content">
-		<!--  Mainpage -->
-		<div id="HeaderContent">
-			<h2>Produkte</h2>
-				<p>
-					Hier können Sie Ihren gewünschten Wein raussuchen und in den Warenkorb verschieben. Zur weiteren Hilfe
-					dienen Ihnen die Filter auf der rechten Seite.
-				</p>
+		<div id="content">
+			<!--  Mainpage -->
+			<div id="HeaderContent">
+				<h2>Produkte</h2>
+					<p>
+						Hier können Sie Ihren gewünschten Wein raussuchen und in den Warenkorb verschieben. Zur weiteren Hilfe
+						dienen Ihnen die Filter auf der rechten Seite. Um den Wein in den Warenkorb zu verschieben, muss das Auswahlfeld
+						angehakt sein und der Knopf "Hinzufügen" gedrückt werden.
+					</p>
+			</div>
+			
+			<!-- SidebarContent -->
+			<div id="sidebarcontents">
+				<a href="#">Warenkorb</a>
+				<br></br>
+				<br></br>
+				<br></br>
+					<!-- Art Filter -->
+					<b>Art:</b>
+					<p><select name="art" style="width: 100px">
+					<option><%="" %></option><!-- leeren String als Startwert -->
+					<c:forEach items="${artTable}" var="art">
+					<option>${art.bez}</option>
+					</c:forEach>
+					</select></p>
+					<!-- Land Filter -->
+					<b>Land:</b>
+					<p><select name="land" style="width: 100px">
+					<option><%="" %></option><!-- leeren String als Startwert -->
+					<c:forEach items="${landTable}" var="land">
+					<option>${land.name}</option>
+					</c:forEach>
+					</select></p>
+					<!-- Region Filter -->
+					<b>Region:</b>
+					<p><select name="region" style="width: 100px">
+					<option><%="" %></option><!-- leeren String als Startwert -->
+					<c:forEach items="${regionTable}" var="region">
+					<option>${region.name}</option>
+					</c:forEach>
+					</select></p>
+					<!-- Typ Filter -->
+					<b>Typ:</b>
+					<p><select name="typ" style="width: 100px">				
+					<option><%="" %></option><!-- leeren String als Startwert -->
+					<c:forEach items="${typTable}" var="typ">
+					<option>${typ.bez}</option>
+					</c:forEach>
+					</select></p>
+					<!-- Rebsorte Filter -->
+					<b>Rebsorte:</b>
+					<p><select name="rebsorte" style="width: 100px">				
+					<option><%="" %></option><!-- leeren String als Startwert -->
+					<c:forEach items="${rebsorteTable}" var="rebsorte">
+					<option>${rebsorte.name}</option>
+					</c:forEach>
+					</select></p>
+					<!-- Weingut -->
+					<b>Weingut:</b>
+					<p><select name="weingut" style="width: 100px">				
+					<option><%="" %></option><!-- leeren String als Startwert -->
+					<c:forEach items="${weingutTable}" var="weingut">
+					<option>${weingut.name}</option>
+					</c:forEach>
+					</select></p>
+					<c:forEach items="${showFilter}" var="showFilter">
+						<p><c:out value="${showFilter}"/></p>
+					</c:forEach>
+					<br/>
+				<!-- Filter Knopf -->
+				<input type="submit" title="btnFilter" value="Filter ausführen"/>
+				
+				<c:out value="${chkbox}"/>			
+			</div>
+			
 		</div>
 		<div id="ShopMainpage">
 			<p>
-				<!-- Tabelle Wein -->				
-				<table border="1">
-					<tr>
-						<th>Name</th>
-						<th>Jahrgang</th>
-						<th>Preis</th>
-						<th>Weingut</th>
-						<th>Typ</th>
-						<th>Art</th>
-					</tr>
-					<% for(int i = 0; i < weinTable.length; i++){ %>
-					<tr>
-						<td><%= weinTable[i].getname() %></td>
-						<td><%= weinTable[i].getjahrgang() %></td>
-						<td><%= weinTable[i].getpreis() %></td>
-						<td><%= weinTable[i].getWeingutBez() %></td>
-						<td><%= weinTable[i].getWeintypBez() %></td>
-						<td><%= weinTable[i].getWeinartBez() %></td>
-					</tr>
-					<% } %>
-				</table>				
+			<c:set value="${cFilter}" var="filledCFilter"/>
+			<%
+				String cFilter = (String)pageContext.getAttribute("filledCFilter");
+				if(cFilter == null){
+					cFilter = "";
+				}
+				Wein[] weinTable = dbService.getWeinTable(cFilter);
+				request.setAttribute("weinTable", weinTable);
+			%>
+			
+			<!-- Tabelle Wein -->				
+					<table border="1">
+						<tr>
+							<th>Name</th>
+							<th>Jahrgang</th>
+							<th>Preis</th>
+							<th>Weingut</th>
+							<th>Typ</th>
+							<th>Art</th>
+							<th>j/n</th>
+						</tr>
+					<c:forEach items="${weinTable}" var="wein">
+						<tr>
+							<td title="${wein.name}">${wein.name}</td>
+							<td title="${wein.jahrgang}">${wein.jahrgang}</td>
+							<td title="${wein.preis}">${wein.preis}</td>
+							<td title="${wein.weingutBez}">${wein.weingutBez}</td>
+							<td title="${wein.weintypBez}">${wein.weintypBez}</td>
+							<td title="${wein.weinartBez}">${wein.weinartBez}</td>
+							<td title="Anklicken um zum Warenkorb hinzuzufügen"><input type="checkbox" name="cBoxWarenkorb"/> </td>
+						</tr>
+					</c:forEach>
+				</table>
+				
 			</p>
 		</div>
-		<!-- Sidebar -->
-		<div id="sidebar">
-
-		</div>
-		<!-- SidebarContent -->
-		<form method="post" action="shop.jsp">
-		<div id="sidebarcontents">
-			<a href="#">Warenkorb</a>
-			<br></br>
-			<br></br>
-			<br></br>
-			<br></br>
-			<br></br>
-		<% 
-			if(
-				request.getParameter("art") == null && 
-				request.getParameter("land") == null && 
-				request.getParameter("region") == null && 
-				request.getParameter("typ") == null && 
-				request.getParameter("rebsorte") == null 
-				&& request.getParameter("weingut") == null){ 
-		%>
-				<!-- Art Filter -->
-				<b>Art:</b>
-				<p><select name="art" style="width: 100px">
-				<option><%="" %></option><!-- leeren String als Startwert -->
-				<% for(int i = 0; i < artTable.length; i++){ %>
-				<option><%=artTable[i].getBez() %></option>
-				<% } %>
-				</select></p>
-				<!-- Land Filter -->
-				<b>Land:</b>
-				<p><select name="land" style="width: 100px">
-				<option><%="" %></option><!-- leeren String als Startwert -->
-				<% for(int i = 0; i < landTable.length; i++){ %>
-				<option><%=landTable[i].getName() %></option>
-				<% } %>
-				</select></p>
-				<!-- Region Filter -->
-				<b>Region:</b>
-				<p><select name="region" style="width: 100px">
-				<option><%="" %></option><!-- leeren String als Startwert -->
-				<% for(int i = 0; i < regionTable.length; i++){ %>
-				<option><%=regionTable[i].getName() %></option>
-				<% } %>
-				</select></p>
-				<!-- Typ Filter -->
-				<b>Typ:</b>
-				<p><select name="typ" style="width: 100px">				
-				<option><%="" %></option><!-- leeren String als Startwert -->
-				<% for(int i = 0; i < typTable.length; i++){ %>
-				<option><%=typTable[i].getBez() %></option>
-				<% } %>
-				</select></p>
-				<!-- Rebsorte Filter -->
-				<b>Rebsorte:</b>
-				<p><select name="rebsorte" style="width: 100px">				
-				<option><%="" %></option><!-- leeren String als Startwert -->
-				<% for(int i = 0; i < rebsorteTable.length; i++){ %>
-				<option><%= rebsorteTable[i].getName() %></option>
-				<% } %>
-				</select></p>
-				<!-- Weingut -->
-				<b>Weingut:</b>
-				<p><select name="weingut" style="width: 100px">				
-				<option><%="" %></option><!-- leeren String als Startwert -->
-				<% for(int i = 0; i < weingutTable.length; i++){ %>
-				<option><%= weingutTable[i].getName() %></option>
-				<% } %>
-				</select></p>
-				
-			<!-- Filter Knopf -->
-			<input type="submit" title="btnFilter" value="Filter ausführen"/>
-		<%
-			}else{
-				String art, land, region, typ, rebsorte, weingut;
-				art = request.getParameter("art");
-				if(!art.equals(""))
-					cFilter = dbService.addFilter(cFilter, "art.bez", art );
-				land = request.getParameter("land");
-				if(!land.equals(""))
-					cFilter = dbService.addFilter(cFilter, "LAND.NAME", land);
-				region = request.getParameter("region");
-				if(!region.equals(""))
-					cFilter = dbService.addFilter(cFilter, "REGION.NAME",region);
-				typ = request.getParameter("typ");
-				if(!typ.equals(""))
-					cFilter = dbService.addFilter(cFilter, "TYP.BEZ", typ);
-				rebsorte = request.getParameter("rebsorte");
-				if(!rebsorte.equals(""))
-					cFilter = dbService.addFilter(cFilter, "REBSORTE.NAME",rebsorte);
-				weingut = request.getParameter("weingut");
-				if(!weingut.equals(""))
-					cFilter = dbService.addFilter(cFilter, "WEINGUT.NAME", weingut);
-				// Ausgewählte Werte der Comboboxen ausgeben
-				out.print("<b>Art</b>:<p>" + art + "</p>");
-				out.print("<b>Land:</b><p>" + land + "</p>");
-				out.print("<b>Region:</b><p>" + region + "</p>");
-				out.print("<b>Typ:</b><p>" + typ + "</p>");
-				out.print("<b>Rebsorte:</b><p>" + rebsorte + "</p>");
-				out.print("<b>Weingut:</b><p>" + weingut + "</p>");
-				weinTable = dbService.getWeinTable(cFilter, false);
-			}
-		%>
-			
-			<br/>
-		</div>
-		</form>
-	</div>
 	<!-- Ende ContentBereich -->
-
+	</form>	
+	
+	
 </div>
 
 <div id="footer">
