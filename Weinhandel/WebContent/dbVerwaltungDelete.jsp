@@ -40,7 +40,7 @@
 		</div>
 			<center>
 				<p>
-					Hier können Weindaten aus der Datenbank rausgelöscht werden!
+					Hier kÃ¶nnen Weindaten aus der Datenbank rausgelÃ¶scht werden!
 				</p>				            	
             </center>            
 		<!-- Sidebar -->
