@@ -1,0 +1,50 @@
+package basic;
+
+public class Globals {
+	
+	// Die Klasse Globals beinhaltet saemtliche globale Variablen die innerhalb des Projekts 
+	// verwendet werden.
+	
+	// #### Konstanten ####
+	
+	// - SQL Statements 
+	// wein.tbl
+	private final String cWeinfields="wein.nr AS Weinnummer, wein.name AS Weinname, "
+			+ "wein.jahrgang AS Weinjahrgang, wein.beschr AS Weinbeschreibung, "
+			+ "wein.preis AS Einzelpreis, wein.weingut as Weingutnummer, wein.art as Weinartnummer,"
+			+ "wein.typ as Weintypnummer, weingut.name AS Weingutname, region.name AS Regionname,"
+			+ " region.beschr AS Regionbeschreibung, land.name AS Landname, "
+			+ "art.bez AS Artbezeichnung, rebsorte.name AS Rebsortenname";
+	
+	public final String gl_WeinSQL ="SELECT " + cWeinfields +" FROM wein "+ 
+									"INNER JOIN weingut ON wein.weingut = weingut.nr " +
+									"INNER JOIN region ON weingut.region = region.nr " +
+									"INNER JOIN land ON region.land = land.nr " +
+									"INNER JOIN typ ON wein.typ = typ.nr " +
+									"INNER JOIN art ON wein.art = art.nr " + 
+									"INNER JOIN wein_rebsorte ON wein.nr = wein_rebsorte.wein " + 
+									"INNER JOIN rebsorte ON wein_rebsorte.rebsorte= rebsorte.nr ";
+									
+	
+	
+	// rebsorten / rebsorten_wein tbl
+	private final String cRebsortenfields ="rebsorte.nr as Rebsortennummer, "
+			+ "rebsorte.name as Rebsortenname, wein_rebsorte.wein as Weinnummer";
+	
+	public final String gl_Wein_Rebsorte = "SELECT " + cRebsortenfields 
+			+ "FROM rebsorte INNER JOIN wein_rebsorte ON rebsorte.nr = wein_rebsorte.rebsorte";
+	
+	// etc..
+	public final String gl_Rebsorte     = "SELECT rebsorte.nr as Rebsortennummer, "
+			+ "rebsorte.name as Rebsortenname FROM rebsorte";
+	public final String gl_WeingutSQL   = "SELECT * FROM weingut";
+	public final String gl_ArtSQL       = "SELECT * FROM art";
+	public final String gl_BenutzerSQL  = "SELECT * FROM benutzer";
+	public final String gl_LandSQL      = "SELECT * FROM land";
+	public final String gl_RegionSQL    = "SELECT * FROM region";
+	public final String gl_TypSQL	    = "SELECT * FROM typ";
+	public final String gl_WarenkorbSQL = "SELECT * FROM warenkorb";
+	
+	public boolean gl_bAdmin = false;
+
+}
