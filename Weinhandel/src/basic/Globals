@@ -1,5 +1,6 @@
 package basic;
 
+
 public class Globals {
 	
 	// Die Klasse Globals beinhaltet saemtliche globale Variablen die innerhalb des Projekts 
@@ -29,19 +30,19 @@ public class Globals {
 	
 	// rebsorten / rebsorten_wein tbl
 	private final String cRebsortenfields ="rebsorte.nr as Rebsortennummer, "
-			+ "rebsorte.name as Rebsortenname, wein_rebsorte.wein as Weinnummer";
+			+ "rebsorte.name as Rebsortenbezeichnung, wein_rebsorte.wein as Weinnummer";
 	
 	public final String gl_Wein_Rebsorte = "SELECT " + cRebsortenfields 
-			+ "FROM rebsorte INNER JOIN wein_rebsorte ON rebsorte.nr = wein_rebsorte.rebsorte";
+			+ " FROM rebsorte INNER JOIN wein_rebsorte ON rebsorte.nr = wein_rebsorte.rebsorte";
 	
 	// etc..
-	public final String gl_Rebsorte     = "SELECT rebsorte.nr as Rebsortennummer, "
-			+ "rebsorte.name as Rebsortenname FROM rebsorte";
-	public final String gl_WeingutSQL   = "SELECT * FROM weingut";
+	public final String gl_RebsorteSQL     = "SELECT rebsorte.nr as Rebsortennummer, "
+			+ "rebsorte.name as Rebsortenbezeichnung FROM rebsorte";
+	public final String gl_WeingutSQL   = "SELECT nr as Nr, name as Name, region as RegionID FROM weingut";
 	public final String gl_ArtSQL       = "SELECT * FROM art";
 	public final String gl_BenutzerSQL  = "SELECT * FROM benutzer";
 	public final String gl_LandSQL      = "SELECT * FROM land";
-	public final String gl_RegionSQL    = "SELECT * FROM region";
+	public final String gl_RegionSQL    = "SELECT nr as Nr, land as LandID, beschr as Beschr, name as Name FROM region";
 	public final String gl_TypSQL	    = "SELECT * FROM typ";
 	public final String gl_WarenkorbSQL = "SELECT * FROM warenkorb";
 	
