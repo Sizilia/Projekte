@@ -2,88 +2,113 @@ package object;
 
 public class Wein {
 	
-	private int m_nr;
-	private String m_name;
-	private int m_jahrgang;
-	private String m_beschr;
-	private float m_preis;
-	private int m_weingut;
-	private int m_typ;
-	private int m_art;
-	
-	private String weingutbez;
-	private String weintypbez;
-	private String weinartbez;
-	
-	public String getWeingutBez() {
-		return weingutbez;
-	}
-	public void setWeingutBez(String weingutbez) {
-		this.weingutbez = weingutbez;
-	}
-	
-	public String getWeintypBez() {
-		return weintypbez;
-	}
-	public void setWeintypBez(String weinypbez) {
-		this.weintypbez = weinypbez;
-	}
-	
-	public String getWeinartBez() {
-		return weinartbez;
-	}
-	public void setWeinartBez(String weinartbez) {
-		this.weinartbez = weinartbez;
-	}
-	
-	
-	public int getnr() {
-		return m_nr;
-	}
-	public void setnr(int m_nr) {
-		this.m_nr = m_nr;
-	}
-	public String getname() {
-		return m_name;
-	}
-	public void setname(String m_name) {
-		this.m_name = m_name;
-	}
-	public int getjahrgang() {
-		return m_jahrgang;
-	}
-	public void setjahrgang(int m_jahrgang) {
-		this.m_jahrgang = m_jahrgang;
-	}
-	public String getbeschr() {
-		return m_beschr;
-	}
-	public void setbeschr(String m_beschr) {
-		this.m_beschr = m_beschr;
-	}
-	public float getpreis() {
-		return m_preis;
-	}
-	public void setpreis(float m_preis) {
-		this.m_preis = m_preis;
-	}
-	public int getweingut() {
-		return m_weingut;
-	}
-	public void setweingut(int m_weingut) {
-		this.m_weingut = m_weingut;
-	}
-	public int gettyp() {
-		return m_typ;
-	}
-	public void settyp(int m_typ) {
-		this.m_typ = m_typ;
-	}
-	public int getart() {
-		return m_art;
-	}
-	public void setart(int m_art) {
-		this.m_art = m_art;
-	}
+	// Felder aus wein.tbl:
+	// Weinnummer, Weinname, Weinjahrgang, Weinbeschreibung, Einzelpreis
+	private int    Weinnummer;
 
+	private String Weinname;
+	private int    Weinjahrgang;
+	private String Weinbeschreibung;
+	private double Einzelpreis;
+
+	private int    Weingutnummer;
+	private int    Weinartnummer;
+	private int    Weintypnummer;
+	
+	// zusätzlich für die Informationen aus INNER JOIN:
+	private String Weingutname;
+	private String Regionname;
+	private String Regionbeschreibung;
+	private String Landname;
+	private String Artbezeichnung;
+	private Wein_Rebsorte[] Wein_Rebsorten ;
+	
+	
+	public int getWeingutnummer() {
+		return Weingutnummer;
+	}
+	public void setWeingutnummer(int weingutnummer) {
+		Weingutnummer = weingutnummer;
+	}
+	public int getWeinartnummer() {
+		return Weinartnummer;
+	}
+	public void setWeinartnummer(int weinartnummer) {
+		Weinartnummer = weinartnummer;
+	}
+	public int getWeintypnummer() {
+		return Weintypnummer;
+	}
+	public void setWeintypnummer(int weintypnummer) {
+		Weintypnummer = weintypnummer;
+	}
+	
+	public int getWeinnummer() {
+		return Weinnummer;
+	}
+	public void setWeinnummer(int weinnummer) {
+		Weinnummer = weinnummer;
+	}
+	public String getWeinname() {
+		return Weinname;
+	}
+	public void setWeinname(String weinname) {
+		Weinname = weinname;
+	}
+	public int getWeinjahrgang() {
+		return Weinjahrgang;
+	}
+	public void setWeinjahrgang(int weinjahrgang) {
+		Weinjahrgang = weinjahrgang;
+	}
+	public String getWeinbeschreibung() {
+		return Weinbeschreibung;
+	}
+	public void setWeinbeschreibung(String weinbeschreibung) {
+		Weinbeschreibung = weinbeschreibung;
+	}
+	public double getEinzelpreis() {
+		return Einzelpreis;
+	}
+	public void setEinzelpreis(double einzelpreis) {
+		Einzelpreis = einzelpreis;
+	}
+	public String getWeingutname() {
+		return Weingutname;
+	}
+	public void setWeingutname(String weingutname) {
+		Weingutname = weingutname;
+	}
+	public String getRegionname() {
+		return Regionname;
+	}
+	public void setRegionname(String regionname) {
+		Regionname = regionname;
+	}
+	public String getRegionbeschreibung() {
+		return Regionbeschreibung;
+	}
+	public void setRegionbeschreibung(String regionbeschreibung) {
+		Regionbeschreibung = regionbeschreibung;
+	}
+	public String getLandname() {
+		return Landname;
+	}
+	public void setLandname(String landname) {
+		Landname = landname;
+	}
+	public String getArtbezeichnung() {
+		return Artbezeichnung;
+	}
+	public void setArtbezeichnung(String artbezeichnung) {
+		Artbezeichnung = artbezeichnung;
+	}
+	
+	public Wein_Rebsorte[] getWein_Rebsorten() {
+		return Wein_Rebsorten;
+	}
+	public void setWein_Rebsorten(Wein_Rebsorte[] Wein_rebsorten) {
+		Wein_Rebsorten = Wein_rebsorten;
+	}
 }
+	
