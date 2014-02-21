@@ -1,23 +1,20 @@
 package object;
 
 public class Rebsorte {
-	
-	private int m_nNr;
-	private String m_cName;
-	
-	public int getNr(){
-		return this.m_nNr;
+
+	private int Rebsortennummer;
+	private String Rebsortenbezeichnung;
+
+	public int getRebsortennummer() {
+		return Rebsortennummer;
 	}
-	public void setNr(int m_nNr){
-		this.m_nNr = m_nNr;
+	public void setRebsortennummer(int rebsortennummer) {
+		Rebsortennummer = rebsortennummer;
 	}
-	
-	public String getName(){
-		return this.m_cName;
+	public String getRebsortenbezeichnung() {
+		return Rebsortenbezeichnung;
 	}
-	public void setName(String m_cName){
-		this.m_cName = m_cName;
+	public void setRebsortenbezeichnung(String rebsortenbezeichnung) {
+		Rebsortenbezeichnung = rebsortenbezeichnung;
 	}
-	
-	
 }
