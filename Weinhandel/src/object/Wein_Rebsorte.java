@@ -1,20 +1,28 @@
 package object;
 
+
 public class Wein_Rebsorte {
 	
-	private int m_nWein;
-	private int m_nRebsorte;
+	private int Weinnummer;
+	private int Rebsortennummer;
+	private String Rebsortenbezeichnung;
 	
-	public int getwein(){
-		return this.m_nWein;
+	public int getWeinnummer() {
+		return Weinnummer;
 	}
-	public void setwein(int m_nWein){
-		this.m_nWein = m_nWein;
-	}	
-	public int getrebsorte(){
-		return this.m_nRebsorte;
+	public void setWeinnummer(int weinnummer) {
+		Weinnummer = weinnummer;
 	}
-	public void setRebsorte(int m_nRebsorte){
-		this.m_nRebsorte = m_nRebsorte;
-	}	
+	public int getRebsortennummer() {
+		return Rebsortennummer;
+	}
+	public void setRebsortennummer(int rebsortennummer) {
+		Rebsortennummer = rebsortennummer;
+	}
+	public String getRebsortenbezeichnung() {
+		return Rebsortenbezeichnung;
+	}
+	public void setRebsortenbezeichnung(String rebsortenbezeichnung) {
+		Rebsortenbezeichnung = rebsortenbezeichnung;
+	}
 }
