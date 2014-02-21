@@ -470,6 +470,17 @@ public class Services {
 		else
 			updateWein(oWein);
 	}
+	
+	/** Loescht einen Datensatz in der Weintabelle
+	 * @throws SQLException 
+	 * @throws ClassNotFoundException 
+	 * 
+	 */
+	public void deleteWeinDS(Wein oWein) throws ClassNotFoundException, SQLException{
+		String cSQL = "";
+		cSQL = "DELETE FROM wein WHERE wein.nr = " + String.valueOf(oWein.getWeinnummer()); 
+		insertSQLStatement(cSQL);	
+	}
 
 
 	/** Die Funktion fuehrt ueber den SQL Update Befehl eine aktualiserung auf 
@@ -507,4 +518,5 @@ public class Services {
 		cSQL += String.valueOf(oWein.getWeinartnummer()) + ")";
 		insertSQLStatement(cSQL);
 	}
+	
 }
