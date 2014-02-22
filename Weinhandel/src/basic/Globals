@@ -13,7 +13,7 @@ public class Globals {
 	private final String cWeinfields="wein.nr AS Weinnummer, wein.name AS Weinname, "
 			+ "wein.jahrgang AS Weinjahrgang, wein.beschr AS Weinbeschreibung, "
 			+ "wein.preis AS Einzelpreis, wein.weingut as Weingutnummer, wein.art as Weinartnummer,"
-			+ "wein.typ as Weintypnummer, weingut.name AS Weingutname, region.name AS Regionname,"
+			+ "wein.typ as Weintypnummer, typ.bez as Weintypbeschreibung, weingut.name AS Weingutname, region.name AS Regionname,"
 			+ " region.beschr AS Regionbeschreibung, land.name AS Landname, "
 			+ "art.bez AS Artbezeichnung, rebsorte.name AS Rebsortenname";
 	
