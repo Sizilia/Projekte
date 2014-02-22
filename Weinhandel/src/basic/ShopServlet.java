@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -62,12 +63,12 @@ public class ShopServlet extends HttpServlet{
 		String[] showFilter = {"Art:    " + artFilter, "Land:    " + landFilter, "Region:    " + regionFilter,
 							   "Typ:    " + typFilter, "Rebsorte:    " + rebsorteFilter, "Weingut:    " + weingutFilter};
 		request.setAttribute("showFilter", showFilter);
-
 		
+		// Button Warenkorb hinzufügen
 		
 		request.setAttribute("cFilter", cFilter);
-		request.getRequestDispatcher("/shop.jsp").forward(request, response);
-		
+		request.getRequestDispatcher("/shop.jsp").forward(request, response);		
 	}
 
+	
 }
