@@ -18,11 +18,21 @@ public class Wein {
 	// zusätzlich für die Informationen aus INNER JOIN:
 	private String Weingutname;
 	private String Regionname;
+	private String Weintypbeschreibung;
+	
 	private String Regionbeschreibung;
 	private String Landname;
 	private String Artbezeichnung;
 	private Wein_Rebsorte[] Wein_Rebsorten ;
 	
+	
+	
+	public String getWeintypbeschreibung() {
+		return Weintypbeschreibung;
+	}
+	public void setWeintypbeschreibung(String weintypbeschreibung) {
+		Weintypbeschreibung = weintypbeschreibung;
+	}
 	
 	public int getWeingutnummer() {
 		return Weingutnummer;
