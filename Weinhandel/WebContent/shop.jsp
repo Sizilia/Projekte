@@ -64,7 +64,7 @@
 			
 			<!-- SidebarContent -->
 			<div id="sidebarcontents">
-				<a href="#">Warenkorb</a>
+				<a href="Warenkorb.jsp">Warenkorb</a>
 				<br></br>
 				<br></br>
 				<br></br>
@@ -105,7 +105,7 @@
 					<p><select name="rebsorte" style="width: 100px">				
 					<option><%="" %></option><!-- leeren String als Startwert -->
 					<c:forEach items="${rebsorteTable}" var="rebsorte">
-					<option>${rebsorte.name}</option>
+					<option>${rebsorte.rebsortenbezeichnung}</option>
 					</c:forEach>
 					</select></p>
 					<!-- Weingut -->
@@ -122,8 +122,7 @@
 					<br/>
 				<!-- Filter Knopf -->
 				<input type="submit" title="btnFilter" value="Filter ausführen"/>
-				
-				<c:out value="${chkbox}"/>			
+						
 			</div>
 			
 		</div>
@@ -135,7 +134,7 @@
 				if(cFilter == null){
 					cFilter = "";
 				}
-				Wein[] weinTable = dbService.getWeinTable(cFilter);
+				Wein[] weinTable = dbService.getWeintable(cFilter);
 				request.setAttribute("weinTable", weinTable);
 			%>
 			
@@ -148,17 +147,17 @@
 							<th>Weingut</th>
 							<th>Typ</th>
 							<th>Art</th>
-							<th>j/n</th>
+							<th></th>
 						</tr>
 					<c:forEach items="${weinTable}" var="wein">
 						<tr>
-							<td title="${wein.name}">${wein.name}</td>
-							<td title="${wein.jahrgang}">${wein.jahrgang}</td>
-							<td title="${wein.preis}">${wein.preis}</td>
-							<td title="${wein.weingutBez}">${wein.weingutBez}</td>
-							<td title="${wein.weintypBez}">${wein.weintypBez}</td>
-							<td title="${wein.weinartBez}">${wein.weinartBez}</td>
-							<td title="Anklicken um zum Warenkorb hinzuzufügen"><input type="checkbox" name="cBoxWarenkorb"/> </td>
+							<td title="${wein.weinname}">${wein.weinname}</td>
+							<td title="${wein.weinjahrgang}">${wein.weinjahrgang}</td>
+							<td title="${wein.einzelpreis}">${wein.einzelpreis}</td>
+							<td title="${wein.weingutname}">${wein.weingutname}</td>
+							<td title="${wein.weintypnummer}">${wein.weintypnummer}</td>
+							<td title="${wein.artbezeichnung}">${wein.artbezeichnung}</td>
+							<td title="Anklicken um zum Warenkorb hinzuzufügen"><input type="submit" name="btnWarenkorbAdd" value="Hinzufügen" /></td>
 						</tr>
 					</c:forEach>
 				</table>
